@@ -19,10 +19,10 @@ Automatically generates filename at path specified in -logfile. If a filename is
 "Autolog_<FolderPath><dd-MM-yyyy_HHmm.ss>.log"
 
 .PARAMETER ExcludePath
-Specifies a path or multiple paths in quotes separated by commas. The Exclude parameter only accepts full paths, relative paths should not be used.
+Specifies a path or multiple paths in quotes separated by commas, this paths should be sub-folders of the -FolderPath parameter and cannot be used to add additional paths. It is intended to exclude a number of sub-folders in the parent folder that will not be scanned for old files. The Exclude parameter only accepts full paths, relative paths should not be used.
 
 .PARAMETER IncludePath
-Specifies a path or multiple paths in quotes separated by commas. The Exclude parameter only accepts full paths, relative paths should not be used. IncludePath is processed before ExcludePath.
+Specifies a path or multiple paths in quotes separated by commas, this paths should be sub-folders of the -FolderPath parameter and cannot be used to add additional paths. It is intended to select a number of sub-folders in the parent folder that will be scanned for old files. The Include parameter only accepts full paths, relative paths should not be used. IncludePath is processed before ExcludePath.
 
 .PARAMETER RegExPath
 This switch affects both the IncludePath and ExcludePath parameters. Instead of matching against a path name a regular expression is used. For more information about regular expressions see the help file: Get-Help about_Regular_Expressions. The regular expression is only matched against the path of a file, so no file names can be excluded by utilizing ExcludePath.
@@ -141,9 +141,9 @@ If this switch is specified only files will be deleted and the existing folder w
 .PARAMETER ArchivedOnly
 If this switch is specified only files that have the archive bit cleared (meaning backed up) will be purged.
 .NOTES   
-Name: deleteold.ps1
-Author: Jaap Brasser
-Version: 2.0.5
+Name       : deleteold.ps1
+Author     : Jaap Brasser
+Version    : 2.1.0-Dev
 DateCreated: 2012-03-04
 DateUpdated: 2016-04-12
 
