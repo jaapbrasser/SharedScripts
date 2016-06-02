@@ -1,4 +1,35 @@
-﻿function Connect-Mstsc {
+﻿<#PSScriptInfo
+
+.VERSION 1.2.2
+
+.DESCRIPTION This function provides the functionality to start an RDP session without having to type in the password
+
+.GUID 87bfac6a-af29-4cf7-a62d-c82ee0fb5fb5
+
+.AUTHOR Jaap Brasser
+
+.COMPANYNAME PowerShell Community
+
+.COPYRIGHT 
+
+.TAGS RDP Remote Desktop Credentials PowerShell
+
+.LICENSEURI 
+
+.PROJECTURI
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#>
+function Connect-Mstsc {
 <#   
 .SYNOPSIS   
 Function to connect an RDP session without the password prompt
@@ -39,8 +70,8 @@ Sets the /h:<height> parameter on the mstsc command: Specifies the height of the
 .NOTES   
 Name: Connect-Mstsc
 Author: Jaap Brasser
-DateUpdated: 2016-01-12
-Version: 1.2.2
+DateUpdated: 2016-06-01
+Version: 1.2.3
 Blog: http://www.jaapbrasser.com
 
 .LINK
@@ -54,42 +85,42 @@ Description
 This command dot sources the script to ensure the Connect-Mstsc function is available in your current PowerShell session
 
 .EXAMPLE   
-Connect-Mstsc -ComputerName server01 -User contoso\jaapbrasser -Password supersecretpw
+Connect-Mstsc -ComputerName server01 -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force)
 
 Description 
 -----------     
 A remote desktop session to server01 will be created using the credentials of contoso\jaapbrasser
 
 .EXAMPLE   
-Connect-Mstsc server01,server02 contoso\jaapbrasser supersecretpw
+Connect-Mstsc server01,server02 contoso\jaapbrasser (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force)
 
 Description 
 -----------     
 Two RDP sessions to server01 and server02 will be created using the credentials of contoso\jaapbrasser
 
 .EXAMPLE   
-server01,server02 | Connect-Mstsc -User contoso\jaapbrasser -Password supersecretpw -Width 1280 -Height 720
+server01,server02 | Connect-Mstsc -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) -Width 1280 -Height 720
 
 Description 
 -----------     
 Two RDP sessions to server01 and server02 will be created using the credentials of contoso\jaapbrasser and both session will be at a resolution of 1280x720.
 
 .EXAMPLE   
-server01,server02 | Connect-Mstsc -User contoso\jaapbrasser -Password supersecretpw -Wait
+server01,server02 | Connect-Mstsc -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) -Wait
 
 Description 
 -----------     
 RDP sessions to server01 will be created, once the mstsc process is closed the session next session is opened to server02. Using the credentials of contoso\jaapbrasser and both session will be at a resolution of 1280x720.
 
 .EXAMPLE   
-Connect-Mstsc -ComputerName server01:3389 -User contoso\jaapbrasser -Password supersecretpw -Admin -MultiMon
+Connect-Mstsc -ComputerName server01:3389 -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) -Admin -MultiMon
 
 Description 
 -----------     
 A RDP session to server01 at port 3389 will be created using the credentials of contoso\jaapbrasser and the /admin and /multimon switches will be set for mstsc
 
 .EXAMPLE   
-Connect-Mstsc -ComputerName server01:3389 -User contoso\jaapbrasser -Password supersecretpw -Public
+Connect-Mstsc -ComputerName server01:3389 -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) -Public
 
 Description 
 -----------     
@@ -103,14 +134,14 @@ Description
 A RDP session to the system at 192.168.1.10 will be created using the credentials stored in the $cred variable.
 
 .EXAMPLE   
-Get-AzureVM | Get-AzureEndPoint -Name 'Remote Desktop' | ForEach-Object { Connect-Mstsc -ComputerName ($_.Vip,$_.Port -join ':') -User contoso\jaapbrasser -Password supersecretpw }
+Get-AzureVM | Get-AzureEndPoint -Name 'Remote Desktop' | ForEach-Object { Connect-Mstsc -ComputerName ($_.Vip,$_.Port -join ':') -User contoso\jaapbrasser -Password (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) }
 
 Description 
 -----------     
 A RDP session is started for each Azure Virtual Machine with the user contoso\jaapbrasser and password supersecretpw
 
 .EXAMPLE
-PowerShell.exe -Command "& {. .\Connect-Mstsc.ps1; Connect-Mstsc server01 contoso\jaapbrasser supersecretpw -Admin}"
+PowerShell.exe -Command "& {. .\Connect-Mstsc.ps1; Connect-Mstsc server01 contoso\jaapbrasser (ConvertTo-SecureString 'supersecretpw' -AsPlainText -Force) -Admin}"
 
 Description
 -----------
@@ -123,30 +154,30 @@ An remote desktop session to server01 will be created using the credentials of c
             ValueFromPipelineByPropertyName=$true,
             Position=0)]
         [Alias('CN')]
-            [string[]]$ComputerName,
+            [string[]]     $ComputerName,
         [Parameter(ParameterSetName='UserPassword',Mandatory=$true,Position=1)]
         [Alias('U')] 
-            [string]$User,
+            [string]       $User,
         [Parameter(ParameterSetName='UserPassword',Mandatory=$true,Position=2)]
         [Alias('P')] 
-            [string]$Password,
+            [securestring] $Password,
         [Parameter(ParameterSetName='Credential',Mandatory=$true,Position=1)]
         [Alias('C')]
-            [PSCredential]$Credential,
+            [PSCredential] $Credential,
         [Alias('A')]
-            [switch]$Admin,
+            [switch]       $Admin,
         [Alias('MM')]
-            [switch]$MultiMon,
+            [switch]       $MultiMon,
         [Alias('F')]
-            [switch]$FullScreen,
+            [switch]       $FullScreen,
         [Alias('Pu')]
-            [switch]$Public,
+            [switch]       $Public,
         [Alias('W')]
-            [int]$Width,
+            [int]          $Width,
         [Alias('H')]
-            [int]$Height,
+            [int]          $Height,
         [Alias('WT')]
-            [switch]$Wait
+            [switch]       $Wait
     )
 
     begin {
