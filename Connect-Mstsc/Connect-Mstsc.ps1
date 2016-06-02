@@ -1,6 +1,6 @@
 ﻿<#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.3
 
 .DESCRIPTION This function provides the functionality to start an RDP session without having to type in the password
 
@@ -68,11 +68,11 @@ Sets the /w:<width> parameter on the mstsc command: Specifies the width of the R
 Sets the /h:<height> parameter on the mstsc command: Specifies the height of the Remote Desktop window
 
 .NOTES   
-Name: Connect-Mstsc
-Author: Jaap Brasser
-DateUpdated: 2016-06-01
-Version: 1.2.3
-Blog: http://www.jaapbrasser.com
+Name:        Connect-Mstsc
+Author:      Jaap Brasser
+DateUpdated: 2016-06-02
+Version:     1.2.3
+Blog:        http://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
