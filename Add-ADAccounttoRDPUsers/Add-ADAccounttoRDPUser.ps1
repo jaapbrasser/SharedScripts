@@ -43,7 +43,7 @@ This parameter can be used instead of the InputFile parameter to specify a singl
 The SamAccount name of an AD User or AD Group that is to be added to the Remote Desktop Users group
 
 .NOTES   
-Name       : Add-ADAccounttoRDPUsers.ps1
+Name       : Add-ADAccounttoRDPUser.ps1
 Author     : Jaap Brasser
 Version    : 1.0.0
 DateCreated: 2016-07-28
@@ -53,19 +53,19 @@ DateUpdated: 2016-07-28
 http://www.jaapbrasser.com
 
 .EXAMPLE   
-.\Add-ADAccounttoRDPUsers.ps1 -Computer Server01 -Trustee JaapBrasser
+.\Add-ADAccounttoRDPUser.ps1 -Computer Server01 -Trustee JaapBrasser
 
 Description:
 Will add the the JaapBrasser account to the Remote Desktop Users group on Server01
 
 .EXAMPLE   
-.\Add-ADAccounttoRDPUsers.ps1 -Computer 'Server01,Server02' -Trustee Contoso\HRManagers
+.\Add-ADAccounttoRDPUser.ps1 -Computer 'Server01,Server02' -Trustee Contoso\HRManagers
 
 Description:
 Will add the HRManagers group in the contoso domain as a member of Remote Desktop Users group on Server01 and Server02
 
 .EXAMPLE   
-.\Add-ADAccounttoRDPUsers.ps1 -InputFile C:\ListofComputers.txt -Trustee User01
+.\Add-ADAccounttoRDPUser.ps1 -InputFile C:\ListofComputers.txt -Trustee User01
 
 Description:
 Will add the User01 account to the Remote Desktop Users group on all servers and computernames listed in the ListofComputers file
