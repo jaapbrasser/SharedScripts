@@ -52,20 +52,27 @@ DateUpdated: 2016-07-28
 .LINK
 http://www.jaapbrasser.com
 
+.EXAMPLE
+. .\Add-ADAccounttoRDPUser.ps1
+
+Description
+-----------
+This command dot sources the script to ensure the Add-ADAccounttoRDPUser function is available in your current PowerShell session
+
 .EXAMPLE   
-.\Add-ADAccounttoRDPUser.ps1 -Computer Server01 -Trustee JaapBrasser
+Add-ADAccounttoRDPUser -Computer Server01 -Trustee JaapBrasser
 
 Description:
 Will add the the JaapBrasser account to the Remote Desktop Users group on Server01
 
 .EXAMPLE   
-.\Add-ADAccounttoRDPUser.ps1 -Computer 'Server01,Server02' -Trustee Contoso\HRManagers
+Add-ADAccounttoRDPUser -Computer 'Server01','Server02' -Trustee Contoso\HRManagers
 
 Description:
 Will add the HRManagers group in the contoso domain as a member of Remote Desktop Users group on Server01 and Server02
 
 .EXAMPLE   
-.\Add-ADAccounttoRDPUser.ps1 -InputFile C:\ListofComputers.txt -Trustee User01
+Add-ADAccounttoRDPUser -InputFile C:\ListofComputers.txt -Trustee User01
 
 Description:
 Will add the User01 account to the Remote Desktop Users group on all servers and computernames listed in the ListofComputers file
@@ -79,6 +86,7 @@ Will add the User01 account to the Remote Desktop Users group on all servers and
         [Parameter(ParameterSetName= 'Computer',
                    Mandatory       = $true
         )]
+        [string[]]
             $Computer,
         [Parameter(Mandatory=$true)]
         [string]
@@ -96,11 +104,10 @@ Will add the User01 account to the Remote Desktop Users group on all servers and
     }
 
     if (!$InputFile) {
-	    [string[]]$Computer = $Computer.Split(',')
 	    $Computer | ForEach-Object {
 		    Write-Verbose "Adding '$ADResolved' to Remote Desktop Users group on '$_'"
 		    try {
-			    ([ADSI]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
+			    ([adsi]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
 			    Write-Verbose "Successfully completed command for '$ADResolved' on '$_'"
 		    } catch {
 			    Write-Warning $_
@@ -113,7 +120,7 @@ Will add the User01 account to the Remote Desktop Users group on all servers and
 	    Get-Content -Path $InputFile | ForEach-Object {
 		    Write-Verbose "Adding '$ADResolved' to Remote Desktop Users group on '$_'"
 		    try {
-			    ([ADSI]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
+			    ([adsi]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
 			    Write-Verbose 'Successfully completed command'
 		    } catch {
 			    Write-Warning $_
