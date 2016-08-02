@@ -25,13 +25,13 @@
     }
 }
 
-function Add-ADAccounttoRDPUser {
+function Remove-ADAccountasLocalAdministrator {
 <#
 .SYNOPSIS   
-Script to add an AD User or group to the Remote Desktop Users group
+Script to remove an AD User or group from the Administrators group
     
 .DESCRIPTION 
-The script can use either a plaintext file or a computer name as input and will add the trustee (user or group) to the Remote Desktop Users group on the computer
+The script can use either a plaintext file or a computer name as input and will remove the trustee (user or group) from the Administrators group on the computer
 	
 .PARAMETER InputFile
 A path that contains a plaintext file with computer names
@@ -40,42 +40,42 @@ A path that contains a plaintext file with computer names
 This parameter can be used instead of the InputFile parameter to specify a single computer or a series of computers using a comma-separated format
 	
 .PARAMETER Trustee
-The SamAccount name of an AD User or AD Group that is to be added to the Remote Desktop Users group
+The SamAccount name of an AD User or AD Group that is to be removed from the Administrators group
 
 .NOTES   
-Name       : Add-ADAccounttoRDPUser.ps1
+Name       : Remove-ADAccountasLocalAdministrator.ps1
 Author     : Jaap Brasser
 Version    : 1.0.0
-DateCreated: 2016-07-28
-DateUpdated: 2016-07-28
+DateCreated: 2016-08-02
+DateUpdated: 2016-08-02
 
 .LINK
 http://www.jaapbrasser.com
 
 .EXAMPLE
-. .\Add-ADAccounttoRDPUser.ps1
+. .\Remove-ADAccountasLocalAdministrator.ps1
 
 Description
 -----------
-This command dot sources the script to ensure the Add-ADAccounttoRDPUser function is available in your current PowerShell session
+This command dot sources the script to ensure the Remove-ADAccountasLocalAdministrator function is available in your current PowerShell session
 
 .EXAMPLE   
-Add-ADAccounttoRDPUser -Computer Server01 -Trustee JaapBrasser
+Remove-ADAccountasLocalAdministrator -Computer Server01 -Trustee JaapBrasser
 
 Description:
-Will add the the JaapBrasser account to the Remote Desktop Users group on Server01
+Will remove the the JaapBrasser account to the Administrators group on Server01
 
 .EXAMPLE   
-Add-ADAccounttoRDPUser -Computer 'Server01','Server02' -Trustee Contoso\HRManagers
+Remove-ADAccountasLocalAdministrator -Computer 'Server01','Server02' -Trustee Contoso\HRManagers
 
 Description:
-Will add the HRManagers group in the contoso domain as a member of Remote Desktop Users group on Server01 and Server02
+Will remove the HRManagers group in the contoso domain as a member of Administrators group on Server01 and Server02
 
 .EXAMPLE   
-Add-ADAccounttoRDPUser -InputFile C:\ListofComputers.txt -Trustee User01
+Remove-ADAccountasLocalAdministrator -InputFile C:\ListofComputers.txt -Trustee User01
 
 Description:
-Will add the User01 account to the Remote Desktop Users group on all servers and computernames listed in the ListofComputers file
+Will remove the User01 account to the Administrators group on all servers and computernames listed in the ListofComputers file
 #>
     [CmdletBinding()]
     param(
@@ -105,9 +105,9 @@ Will add the User01 account to the Remote Desktop Users group on all servers and
 
     if (!$InputFile) {
 	    $Computer | ForEach-Object {
-		    Write-Verbose "Adding '$ADResolved' to Remote Desktop Users group on '$_'"
+		    Write-Verbose "Removing '$ADResolved' from Administrators group on '$_'"
 		    try {
-			    ([adsi]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
+			    ([adsi]"WinNT://$_/Administrators,group").remove($Trustee)
 			    Write-Verbose "Successfully completed command for '$ADResolved' on '$_'"
 		    } catch {
 			    Write-Warning $_
@@ -118,9 +118,9 @@ Will add the User01 account to the Remote Desktop Users group on all servers and
 		    Write-Warning 'Input file not found, please enter correct path'
 	    }
 	    Get-Content -Path $InputFile | ForEach-Object {
-		    Write-Verbose "Adding '$ADResolved' to Remote Desktop Users group on '$_'"
+		    Write-Verbose "Removing '$ADResolved' from Administrators group on '$_'"
 		    try {
-			    ([adsi]"WinNT://$_/Remote Desktop Users,group").add($Trustee)
+			    ([adsi]"WinNT://$_/Administrators,group").remove($Trustee)
 			    Write-Verbose 'Successfully completed command'
 		    } catch {
 			    Write-Warning $_
