@@ -63,7 +63,7 @@ This command dot sources the script to ensure the Remove-ADAccountasLocalAdminis
 Remove-ADAccountasLocalAdministrator -Computer Server01 -Trustee JaapBrasser
 
 Description:
-Will remove the the JaapBrasser account to the Administrators group on Server01
+Will remove the the JaapBrasser account from the Administrators group on Server01
 
 .EXAMPLE   
 Remove-ADAccountasLocalAdministrator -Computer 'Server01','Server02' -Trustee Contoso\HRManagers
