@@ -124,7 +124,12 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
                 }
             } -End {
                 if ($ExcludeSimilar) {
-                    $Array | Select-Object -Property *,@{name='GroupedName';expression={($_.ProgramName -split $Regex)[1]}} |
+                    $Array | Select-Object -Property *,@{
+                        name       = 'GroupedName'
+                        expression = {
+                            ($_.ProgramName -split $Regex)[1]
+                        }
+                    } |
                     Group-Object -Property 'GroupedName' | ForEach-Object {
                         $_.Group[0] | Select-Object -Property * -ExcludeProperty GroupedName
                     }
