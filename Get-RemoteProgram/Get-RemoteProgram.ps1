@@ -111,7 +111,7 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
                 }
             } | ForEach-Object -Begin {
                 if ($SimilarWord) {
-                    $Regex = [regex]"(^(.+?\s){$SimilarWord}).*$|(.*)"
+                    $Regex = [regex]('(^(.+?\s){{0}}).*$|(.*)' -f $SimilarWord)
                 } else {
                     $Regex = [regex]"(^(.+?\s){3}).*$|(.*)"
                 }

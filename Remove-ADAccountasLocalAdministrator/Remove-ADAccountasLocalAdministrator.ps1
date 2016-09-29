@@ -107,7 +107,7 @@ Will remove the User01 account to the Administrators group on all servers and co
 	    $Computer | ForEach-Object {
 		    Write-Verbose "Removing '$ADResolved' from Administrators group on '$_'"
 		    try {
-			    ([adsi]"WinNT://$_/Administrators,group").remove($Trustee)
+			    ([adsi]"WinNT://$_/Administrators,group").psbase.remove($Trustee)
 			    Write-Verbose "Successfully completed command for '$ADResolved' on '$_'"
 		    } catch {
 			    Write-Warning $_
@@ -120,7 +120,7 @@ Will remove the User01 account to the Administrators group on all servers and co
 	    Get-Content -Path $InputFile | ForEach-Object {
 		    Write-Verbose "Removing '$ADResolved' from Administrators group on '$_'"
 		    try {
-			    ([adsi]"WinNT://$_/Administrators,group").remove($Trustee)
+			    ([adsi]"WinNT://$_/Administrators,group").psbase.remove($Trustee)
 			    Write-Verbose 'Successfully completed command'
 		    } catch {
 			    Write-Warning $_
