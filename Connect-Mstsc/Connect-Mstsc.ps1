@@ -71,7 +71,7 @@ Sets the /h:<height> parameter on the mstsc command: Specifies the height of the
 Name:        Connect-Mstsc
 Author:      Jaap Brasser
 DateUpdated: 2016-10-28
-Version:     1.2.4
+Version:     1.2.5
 Blog:        http://www.jaapbrasser.com
 
 .LINK
@@ -210,18 +210,18 @@ An remote desktop session to server01 will be created using the credentials of c
                 $ComputerCmdkey = $Computer
             }
 
-            $ProcessInfo.FileName = "$($env:SystemRoot)\system32\cmdkey.exe"
-            $ProcessInfo.Arguments = "/generic:TERMSRV/$ComputerCmdkey /user:$User /pass:$UserPass"
+            $ProcessInfo.FileName    = "$($env:SystemRoot)\system32\cmdkey.exe"
+            $ProcessInfo.Arguments   = "/generic:TERMSRV/$ComputerCmdkey /user:$User /pass:$($UserPass)"
             $ProcessInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Hidden
             $Process.StartInfo = $ProcessInfo
             if ($PSCmdlet.ShouldProcess($ComputerCmdkey,'Adding credentials to store')) {
                 [void]$Process.Start()
             }
 
-            $ProcessInfo.FileName = "$($env:SystemRoot)\system32\mstsc.exe"
-            $ProcessInfo.Arguments = "$MstscArguments /v $Computer"
+            $ProcessInfo.FileName    = "$($env:SystemRoot)\system32\mstsc.exe"
+            $ProcessInfo.Arguments   = "$MstscArguments /v $Computer"
             $ProcessInfo.WindowStyle = [System.Diagnostics.ProcessWindowStyle]::Normal
-            $Process.StartInfo = $ProcessInfo
+            $Process.StartInfo       = $ProcessInfo
             if ($PSCmdlet.ShouldProcess($Computer,'Connecting mstsc')) {
                 [void]$Process.Start()
                 if ($Wait) {
