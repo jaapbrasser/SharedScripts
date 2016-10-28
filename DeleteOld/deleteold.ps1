@@ -723,8 +723,8 @@ param(
 
 # Check if correct parameters are used
 if (-not $FolderPath) {Write-Warning 'Please specify the -FolderPath variable, this parameter is required. Use Get-Help .\deleteold.ps1 to display help.';exit}
-if (-not $FileAge) {Write-Warning 'Please specify the -FileAge variable, this parameter is required. Use Get-Help .\deleteold.ps1 to display help.';exit}
-if (-not $LogFile) {Write-Warning 'Please specify the -LogFile variable, this parameter is required. Use Get-Help .\deleteold.ps1 to display help.';exit}
+if (-not $FileAge)    {Write-Warning 'Please specify the -FileAge variable, this parameter is required. Use Get-Help .\deleteold.ps1 to display help.';exit}
+if (-not $LogFile)    {Write-Warning 'Please specify the -LogFile variable, this parameter is required. Use Get-Help .\deleteold.ps1 to display help.';exit}
 if ($Autolog) {
     # Section that is triggered when the -autolog switch is active
 	# Gets date and reformats to be used in log filename

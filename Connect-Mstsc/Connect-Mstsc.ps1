@@ -70,8 +70,8 @@ Sets the /h:<height> parameter on the mstsc command: Specifies the height of the
 .NOTES   
 Name:        Connect-Mstsc
 Author:      Jaap Brasser
-DateUpdated: 2016-06-02
-Version:     1.2.3
+DateUpdated: 2016-10-28
+Version:     1.2.4
 Blog:        http://www.jaapbrasser.com
 
 .LINK
@@ -192,8 +192,10 @@ An remote desktop session to server01 will be created using the credentials of c
         }
 
         if ($Credential) {
-            $User = $Credential.UserName
+            $User     = $Credential.UserName
             $Password = $Credential.GetNetworkCredential().Password
+        } else {
+            $Password = [System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password))
         }
     }
     process {
