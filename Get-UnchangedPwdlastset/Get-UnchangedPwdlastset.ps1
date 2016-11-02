@@ -8,8 +8,9 @@ This script will return the samaccountname, pwdlastset and if an account is curr
 .NOTES   
 Name:        Get-UnchangedPwdLastSet.ps1
 Author:      Jaap Brasser
+Version:     1.0.0
 DateCreated: 2013-07-26
-DateUpdated: 2015-09-21
+DateUpdated: 2016-11-02
 Site:        http://www.jaapbrasser.com
 
 .LINK
