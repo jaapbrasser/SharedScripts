@@ -13,11 +13,12 @@ This can be a single computer name or an array of computer names which will chec
 This can be a single user name or an array of user names which will checked for the LastLogin property on the computers specified in the ComputerName parameter
 
 .NOTES   
-Name: Get-LocalLastLogonTime
-Author: Jaap Brasser
-DateUpdated: 2015-06-01
-Version: 1.0
-Blog: http://www.jaapbrasser.com
+Name:        Get-LocalLastLogonTime
+Author:      Jaap Brasser
+DateCreated: 2015-06-01
+DateUpdated: 2016-11-15
+Version:     1.1
+Blog:        http://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
@@ -28,6 +29,13 @@ http://www.jaapbrasser.com
 Description
 -----------
 This command dot sources the script to ensure the Get-LocalLastLogonTime function is available in your current PowerShell session
+
+.EXAMPLE
+Get-LocalLastLogonTime
+
+Description
+-----------
+This command will run the script and display the last logon date for the current user on the current system
 
 .EXAMPLE
 Get-LocalLastLogonTime -ComputerName localhost -UserName user1,JaapBrasser,administrator
@@ -44,19 +52,13 @@ Description
 Will check server1 and server2 for the LastLogin time of JaapBrasser and administrator. This example is useful for scenarios when scheduling tasks or when executing this PowerShell script from batch files.
 #>
     param(
-    [Parameter(
-            Mandatory,
-            ValueFromPipeline,
-            ValueFromPipelineByPropertyName,
-            Position=0
-    )]
-    [string[]]
-        $ComputerName,
-    [Parameter(
-            Mandatory
-    )]
-    [string[]]
-        $UserName
+        [Parameter(
+                ValueFromPipeline=$true,
+                ValueFromPipelineByPropertyName=$true,
+                Position=0
+        )]
+        [string[]] $ComputerName = $env:ComputerName,
+        [string[]] $UserName     = $env:USERNAME
     )
 
 
@@ -69,22 +71,22 @@ Will check server1 and server2 for the LastLogin time of JaapBrasser and adminis
 
     process {
         foreach ($Computer in $ComputerName) {
-            if (Test-Connection -ComputerName $Computer -Count 1 -Quiet) {
+            if ((Test-Connection -ComputerName $Computer -Count 1 -Quiet) -or ($ComputerName -eq '.')) {
                 foreach ($User in $UserName) {
                     $ObjectSplat = @{
                         ComputerName = $Computer
-                        UserName = $User
-                        Error = $null
-                        LastLogin = $null
+                        UserName     = $User
+                        Error        = $null
+                        LastLogin    = $null
                     }
                     $CurrentUser = $null
-                    $CurrentUser = try {([ADSI]"WinNT://$computer/$user")} catch {}
+                    $CurrentUser = try {([adsi]"WinNT://$computer/$user")} catch {}
                     if ($CurrentUser.Properties.LastLogin) {
                         $ObjectSplat.LastLogin = try {
-                                            [datetime](-join $CurrentUser.Properties.LastLogin)
-                                        } catch {
-                                            -join $CurrentUser.Properties.LastLogin
-                                        }
+                                                     [datetime](-join $CurrentUser.Properties.LastLogin)
+                                                 } catch {
+                                                     -join $CurrentUser.Properties.LastLogin
+                                                 }
                     } elseif ($CurrentUser.Properties.Name) {
                     } else {
                         $ObjectSplat.Error = 'User not found'
@@ -94,7 +96,7 @@ Will check server1 and server2 for the LastLogin time of JaapBrasser and adminis
             } else {
                 $ObjectSplat = @{
                     ComputerName = $Computer
-                    Error = 'Ping failed'
+                    Error        = 'Ping failed'
                 }
                 New-Object -TypeName PSCustomObject -Property $ObjectSplat | Select-Object @SelectSplat
             }
