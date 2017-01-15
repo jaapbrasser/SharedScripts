@@ -46,7 +46,7 @@ Set-AdditionalCalendar -TraditionalLunar
 Description
 -----------
 Configures the Calendar to the show the lunar calendar with traditional Chinese characters
-#>    
+#>
     [cmdletbinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(
