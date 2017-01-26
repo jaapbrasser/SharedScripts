@@ -25,7 +25,7 @@ Description
 Retrieves all storage sense configuration and recently cleaned data from the current system
 #>    
     $ErrorActionPreference = 'SilentlyContinue'
-    $HashProperties = @{
+    $HashProperties = [ordered]@{
         StorageSenseEnabled    = (Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\' -Name 01) -as [bool]
         RemoveAppFilesEnabled  = (Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\' -Name 04) -as [bool]
         ClearRecycleBinEnabled = (Get-ItemPropertyValue -Path 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\' -Name 08) -as [bool]
