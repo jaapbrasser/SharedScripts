@@ -6,20 +6,17 @@ Configures the Storage Sense options in Windows 10
 .DESCRIPTION 
 This function can configure Storage Sense options in Windows 10. It allows to enable/disable this feature
 
-.PARAMETER DisableBlueLight
-Disables blue light setting, restoring the colors to regular colors
+.PARAMETER EnableStorageSense
+Enables storage sense setting, automatically cleaning up space on your system
 
-.PARAMETER EnableBlueLight
-Enables blue light setting, lowering blue light emitted
+.PARAMETER DisableStorageSense
+Disables storage sense setting, not automatically cleaning up space on your system
 
-.PARAMETER DisableAutomaticSchedule
-Disables automatic day-night schedule based on geographical location
+.PARAMETER RemoveAppFiles
+Configures the 'Delete temporary files that my apps aren't using' to either true or false
 
-.PARAMETER EnableAutomaticSchedule
-Enables automatic day-night schedule based on geographical location
-
-.PARAMETER ColorTemperature
-Defines the color temperature of the blue light settings
+.PARAMETER ClearRecycleBin
+Configures the 'Delete files that have been in the recycle bin for over 30 days' to either true or false
 
 .NOTES   
 Name:        Set-StorageSense
@@ -33,25 +30,25 @@ Blog:        http://www.jaapbrasser.com
 http://www.jaapbrasser.com
 
 .EXAMPLE   
-Set-BlueLight -DisableBlueLight
+Set-StorageSense -DisableStorageSense
 
 Description
 -----------
-Disables reduced blue light and restores colors to default
+Disables Storage Sense on the system
 
 .EXAMPLE   
-Set-BlueLight -EnableBlueLight -ColorTemperature MediumShift
+Set-StorageSense -EnableStorageSense -RemoveAppFiles $true
 
 Description
 -----------
-Enables reduced blue light and sets colors to the half way point on the color temperature slider
+Enables Storage Sense on the system and sets the 'Delete temporary files that my apps aren't using' to enabled
 
 .EXAMPLE   
-Set-BlueLight -EnableAutomaticSchedule
+Set-StorageSense -DisableStorageSense -RemoveAppFiles $true -ClearRecycleBin $true -Verbose
 
 Description
 -----------
-Enables automatic day-night schedule based on geographical location
+Disables Storage Sense on the system and sets both the 'Delete temporary files that my apps aren't using' and the 'Delete files that have been in the recycle bin for over 30 days' to enabled
 #>    
     [cmdletbinding(SupportsShouldProcess=$true)]
     param(
@@ -59,141 +56,50 @@ Enables automatic day-night schedule based on geographical location
             Mandatory=$true, 
             ParameterSetName='StorageSense On'
         )]
+        [switch] $EnableStorageSense,
         [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles Off'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin Off'
+            Mandatory=$true, 
+            ParameterSetName='StorageSense Off'
         )]
         [switch] $DisableStorageSense,
         [Parameter(
-            Mandatory=$true, 
-            ParameterSetName='StorageSense Off'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles Off'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin Off'
-        )]
-        [switch] $EnableStorageSense,
-
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='StorageSense Off'
-        )]
-        [Parameter(
             Mandatory=$false, 
             ParameterSetName='StorageSense On'
         )]
         [Parameter(
-            Mandatory=$true, 
-            ParameterSetName='RemoveAppFiles On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin Off'
-        )]
-        [switch] $EnableRemoveAppFiles,
-        [Parameter(
             Mandatory=$false, 
             ParameterSetName='StorageSense Off'
         )]
         [Parameter(
             Mandatory=$false, 
-            ParameterSetName='StorageSense On'
+            ParameterSetName='Configure StorageSense'
         )]
-        [Parameter(
-            Mandatory=$true, 
-            ParameterSetName='RemoveAppFiles Off'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='ClearRecycleBin Off'
-        )]
-        [switch] $DisableRemoveAppFiles,
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='StorageSense Off'
-        )]
+        [bool] $RemoveAppFiles,
         [Parameter(
             Mandatory=$false, 
             ParameterSetName='StorageSense On'
         )]
         [Parameter(
             Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles Off'
-        )]
-        [Parameter(
-            Mandatory=$true, 
-            ParameterSetName='ClearRecycleBin On'
-        )]
-        [switch] $EnableClearRecycleBin,
-        [Parameter(
-            Mandatory=$false, 
             ParameterSetName='StorageSense Off'
         )]
         [Parameter(
             Mandatory=$false, 
-            ParameterSetName='StorageSense On'
+            ParameterSetName='Configure StorageSense'
         )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles On'
-        )]
-        [Parameter(
-            Mandatory=$false, 
-            ParameterSetName='RemoveAppFiles Off'
-        )]
-        [Parameter(
-            Mandatory=$true, 
-            ParameterSetName='ClearRecycleBin Off'
-        )]
-        [switch] $DisableClearRecycleBin
+        [bool] $ClearRecycleBin
     )
 
     begin {
         $RegPath = @{
-            StorageSense = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\01'
-            TemporaryApp = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\04'
-            RecycleBin   = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\08'
-            SpaceHistory = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\SpaceHistory'
+            StorageSense = '01'
+            TemporaryApp = '04'
+            RecycleBin   = '08'
         }
         $SetRegistrySplat = @{
             Path  = 'HKCU:\Software\Microsoft\Windows\CurrentVersion\StorageSense\Parameters\StoragePolicy\'
             Name  = $null
+            Value = $null
         }
         function Set-RegistryValue {
             param(
@@ -202,48 +108,38 @@ Enables automatic day-night schedule based on geographical location
                 [string] $Value
             )
             if (-not (Test-Path -Path $Path)) {
-                if ($PSCmdlet.ShouldProcess($Path,'Creating registry key')) {
+                if ($PSCmdlet.ShouldProcess("$Path$Name : $Value",'Creating registry key')) {
                     $null = New-Item -Path $Path -Force
                 }
             }
         
-            if ($PSCmdlet.ShouldProcess($Path,'Updating registry value')) {
+            if ($PSCmdlet.ShouldProcess("$Path$Name : $Value",'Updating registry value'))   {
                 $null = Set-ItemProperty @PSBoundParameters -Force
             }
         }
     }
 
     process {
-        switch ($PsCmdlet.ParameterSetName) {
-            'StorageSense On'     {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.bluelightreductionstate'
-                $SetRegistrySplat.Value = $BlueLightOption.Off
-                Set-RegistryValue
+        switch (1) {
+            {$PsCmdlet.ParameterSetName -eq 'StorageSense On'}    {
+                $SetRegistrySplat.Name  = $RegPath.StorageSense
+                $SetRegistrySplat.Value = 1
+                Set-RegistryValue @SetRegistrySplat
             }
-            'StorageSense Off'      {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.bluelightreductionstate'
-                $SetRegistrySplat.Value = $BlueLightOption.On
-                Set-RegistryValue
+            {$PsCmdlet.ParameterSetName -eq 'StorageSense Off'}   {
+                $SetRegistrySplat.Name  = $RegPath.StorageSense
+                $SetRegistrySplat.Value = 0
+                Set-RegistryValue @SetRegistrySplat
             }
-            'RemoveAppFiles On'     {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.settings'
-                $SetRegistrySplat.Value = $BlueLightOption.AutoOff
-                Set-RegistryValue
+            {$PSBoundparameters.Keys -contains 'RemoveAppFiles'}  {
+                $SetRegistrySplat.Name  = $RegPath.TemporaryApp
+                $SetRegistrySplat.Value = [int]$RemoveAppFiles
+                Set-RegistryValue @SetRegistrySplat
             }
-            'RemoveAppFiles Off'      {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.settings'
-                $SetRegistrySplat.Value = $BlueLightOption.AutoOn
-                Set-RegistryValue
-            }
-            'ClearRecycleBin On'     {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.settings'
-                $SetRegistrySplat.Value = $BlueLightOption.AutoOff
-                Set-RegistryValue
-            }
-            'ClearRecycleBin Off'      {
-                $SetRegistrySplat.Path  = $SetRegistrySplat.Path -f '$$windows.data.bluelightreduction.settings'
-                $SetRegistrySplat.Value = $BlueLightOption.AutoOn
-                Set-RegistryValue
+            {$PSBoundparameters.Keys -contains 'ClearRecycleBin'} {
+                $SetRegistrySplat.Name  = $RegPath.RecycleBin
+                $SetRegistrySplat.Value = [int]$ClearRecycleBin
+                Set-RegistryValue @SetRegistrySplat
             }
         }
     }
