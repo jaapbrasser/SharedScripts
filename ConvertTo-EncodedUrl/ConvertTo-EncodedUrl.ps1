@@ -9,12 +9,15 @@ This function can be used to convert a Url to a Percent-Encoded Url of a specifi
 .PARAMETER Uri
 The Uri that should be encoded
 
+.PARAMETER Provider
+The provider that should be use for the percent encoded url forwarding. Currently Google and Search are supported
+
 .NOTES
 Name:        ConvertTo-EncodedUrl
 Author:      Jaap Brasser
 DateCreated: 2017-09-10
 DateUpdated: 2017-09-10
-Version:     1.0.0
+Version:     1.0.1
 Blog:        http://www.jaapbrasser.com
 
 .LINK
