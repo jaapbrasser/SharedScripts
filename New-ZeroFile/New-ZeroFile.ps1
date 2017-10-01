@@ -22,8 +22,8 @@ Returns the created file object so that this function can be used in a pipeline
 Name:        New-ZeroFile
 Author:      Jaap Brasser
 DateCreated: 2017-01-26
-DateUpdated: 2017-09-30
-Version:     1.1.0
+DateUpdated: 2017-10-01
+Version:     1.1.1
 Blog:        http://www.jaapbrasser.com
 
 .LINK
@@ -55,12 +55,12 @@ Creates two 10mb files in the C:\Temp folder: jb3.file and jb4.file. Overwriting
     [CmdletBinding()]
     param(
         [Parameter(
-            Mandatory=$true,
-            ValueFromPipeline=$true
+            Mandatory         = $true,
+            ValueFromPipeline = $true
         )]
             [string[]] $Path,
         [Parameter(
-            Mandatory=$true
+            Mandatory         = $true
         )]
         [alias('Size','FS')]
             [long]    $FileSize,
@@ -74,21 +74,16 @@ Creates two 10mb files in the C:\Temp folder: jb3.file and jb4.file. Overwriting
                 Write-Verbose "Overwriting existing file '$CurrentPath'"
                 Remove-Item -LiteralPath $CurrentPath -Force
                 $null = fsutil.exe file createnew ""$CurrentPath"" $FileSize
-                
-                # Output object if file has been created and output object switch is set    
-                if ($OutputObject) {
-                    Get-Item -LiteralPath $CurrentPath
-                }
             } elseif (Test-Path -LiteralPath $CurrentPath) {
-                Write-Warning "The file '$CurrentPath' already exists, no action taken "
+                Write-Warning "The file '$CurrentPath' already exists, no action taken" -WarningVariable Warning
             } else {
                 Write-Verbose "Creating new file '$CurrentPath'"
                 $null = fsutil.exe file createnew ""$CurrentPath"" $FileSize
+            }
 
-                # Output object if file has been created and output object switch is set    
-                if ($OutputObject) {
-                    Get-Item -LiteralPath $CurrentPath
-                }
+            # Output object if file has been created and output object switch is set    
+            if ($OutputObject -and $Warning -notmatch [regex]::Escape($CurrentPath)) {
+                Get-Item -LiteralPath $CurrentPath
             }
         }
     }
