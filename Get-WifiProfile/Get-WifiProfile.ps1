@@ -37,7 +37,7 @@ Retrieves all the passwords and profiles
         if ($WifiProfile) {
             foreach ($CurrentWifi in $WifiProfile) {
                 $Hash = [ordered]@{
-                    WifiName = ($_ -split '\:',2)[1].Trim()
+                    WifiName = $CurrentWifi
                 }
                 $Hash.Password = (-join ((netsh wlan show profile "$($Hash.WifiName)" key=clear) -match 'key c')) -replace '\s*Key Content\s+: '
     
