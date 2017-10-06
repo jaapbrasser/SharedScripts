@@ -10,7 +10,7 @@ This function serves as a wrapper for fsutil, and can be used to create an empty
 The path and file name of the zero file that will be created
 
 .PARAMETER FileSize
-Specifies the size, in bytes,  of the file, 1KB / 1MB / 1GB / 1TB notatation can be used
+Specifies the size, in bytes, of the file, 1KB / 1MB / 1GB / 1TB notatation can be used
 
 .PARAMETER Force
 Overwrites an existing file if the specified path already exists
