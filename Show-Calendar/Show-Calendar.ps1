@@ -1,4 +1,4 @@
-Function Show-Calender {
+Function Show-Calendar {
     Param(
         $Week,
         $Month,
@@ -38,4 +38,4 @@ Function Show-Calender {
     $DisplayLine
 }
 
-Show-Calender   
+Show-Calendar
