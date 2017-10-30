@@ -40,8 +40,10 @@ Description
         $TopFile = '${P_DisplayTopFileExt}'
     )
 
+    $ErrorActionPreference = 'SilentlyContinue'
+
     $Extension.Split(',') | ForEach-Object {
-        Get-ChildItem $FolderPath -Include "*$_" -Recurse -ErrorAction SilentlyContinue |
+        Get-ChildItem $FolderPath -Include "*$_" -Recurse -Force |
         Sort-Object -Property Length -Descending | 
         Select-Object -First $TopFile -Property @{
             Name       = 'SizeMB'
