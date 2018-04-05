@@ -23,6 +23,15 @@ The computer to which connectivity will be checked
 .PARAMETER Property
 Additional values to be loaded from the registry. Can contain a string or an array of string that will be attempted to retrieve from the registry for each program entry
 
+.PARAMETER IncludeProgram
+This will include the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
+
+.PARAMETER ExcludeProgram
+This will exclude the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
+
+.PARAMETER ProgramRegExMatch
+This parameter will change the default behaviour of IncludeProgram and ExcludeProgram from -like operator to -match operator. This allows for more complex matching if required
+
 .PARAMETER LastAccessTime
 Estimates the last time the program was executed by looking in the installation folder, if it exists, and retrieves the most recent LastAccessTime attribute of any .exe in that folder. This increases execution time of this script as it requires (remotely) querying the file system to retrieve this information.
 
@@ -67,6 +76,18 @@ Get-RemoteProgram -Property installdate,uninstallstring,installlocation -LastAcc
 
 Description
 Will gather the list of programs from Server01 and retrieves the InstallDate,UninstallString and InstallLocation properties. Then filters out all products that do not have a installlocation set and displays the LastAccessTime when it can be resolved.
+
+.EXAMPLE
+Get-RemoteProgram -Property installdate -IncludeProgram *office*
+
+Description
+Will retrieve the InstallDate of all components that match the wildcard pattern of *office*
+
+.EXAMPLE
+Get-RemoteProgram -IncludeProgram ^Office.* -ProgramRegExMatch
+
+Description
+Will retrieve the InstallDate of all components that match the regex pattern of ^Office.*, which means any ProgramName starting with the word Office
 #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
@@ -79,6 +100,12 @@ Will gather the list of programs from Server01 and retrieves the InstallDate,Uni
         [Parameter(Position=0)]
         [string[]]
             $Property,
+        [string]
+            $IncludeProgram,
+        [string]
+            $ExcludeProgram,
+        [switch]
+            $ProgramRegExMatch,
         [switch]
             $LastAccessTime,
         [switch]
@@ -120,32 +147,55 @@ Will gather the list of programs from Server01 and retrieves the InstallDate,Uni
                                     $HashProperty.ComputerName = $Computer
                                     $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
                                     
-                                    if ($Property) {
-                                        foreach ($CurrentProperty in $Property) {
-                                            $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
+                                    if ($IncludeProgram) {
+                                        if ($ProgramRegExMatch) {
+                                            if ($DisplayName -notmatch $IncludeProgram) {
+                                                $DisplayName = $null
+                                            }
+                                        } else {
+                                            if ($DisplayName -notlike $IncludeProgram) {
+                                                $DisplayName = $null
+                                            }
                                         }
                                     }
-                                    
-                                    if ($LastAccessTime) {
-                                        $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
-                                        if ($InstallPath) {
-                                            $WmiSplat = @{
-                                                ComputerName = $Computer
-                                                Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
-                                                ErrorAction  = 'SilentlyContinue'
+
+                                    if ($ExcludeProgram) {
+                                        if ($ProgramRegExMatch) {
+                                            if ($DisplayName -match $ExcludeProgram) {
+                                                $DisplayName = $null
                                             }
-                                            $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
-                                                Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
-                                                Sort-Object -Property LastAccessed |
-                                                Select-Object -Last 1 | ForEach-Object {
-                                                    $_.ConvertToDateTime($_.LastAccessed)
-                                                }
                                         } else {
-                                            $HashProperty.LastAccessTime = $null
+                                            if ($DisplayName -like $ExcludeProgram) {
+                                                $DisplayName = $null
+                                            }
                                         }
                                     }
 
                                     if ($DisplayName) {
+                                        if ($Property) {
+                                            foreach ($CurrentProperty in $Property) {
+                                                $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
+                                            }
+                                        }
+                                        if ($LastAccessTime) {
+                                            $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
+                                            if ($InstallPath) {
+                                                $WmiSplat = @{
+                                                    ComputerName = $Computer
+                                                    Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
+                                                    ErrorAction  = 'SilentlyContinue'
+                                                }
+                                                $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
+                                                    Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
+                                                    Sort-Object -Property LastAccessed |
+                                                    Select-Object -Last 1 | ForEach-Object {
+                                                        $_.ConvertToDateTime($_.LastAccessed)
+                                                    }
+                                            } else {
+                                                $HashProperty.LastAccessTime = $null
+                                            }
+                                        }
+                                        
                                         if ($psversiontable.psversion.major -gt 2) {
                                             [pscustomobject]$HashProperty
                                         } else {
