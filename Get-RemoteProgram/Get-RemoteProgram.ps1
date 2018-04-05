@@ -23,6 +23,9 @@ The computer to which connectivity will be checked
 .PARAMETER Property
 Additional values to be loaded from the registry. Can contain a string or an array of string that will be attempted to retrieve from the registry for each program entry
 
+.PARAMETER LastAccessTime
+Estimates the last time the program was executed by looking in the installation folder, if it exists, and retrieves the most recent LastAccessTime attribute of any .exe in that folder. This increases execution time of this script as it requires (remotely) querying the file system to retrieve this information.
+
 .PARAMETER ExcludeSimilar
 This will filter out similar programnames, the default value is to filter on the first 3 words in a program name. If a program only consists of less words it is excluded and it will not be filtered. For example if you Visual Studio 2015 installed it will list all the components individually, using -ExcludeSimilar will only display the first entry.
 
@@ -58,6 +61,12 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
 
 Description
 Will retrieve the installed programs on server01/02 that are passed on to the function through the pipeline and also retrieves the uninstall string for each program. Will only display a single entry of a program of which the first four words are identical.
+
+.EXAMPLE
+Get-RemoteProgram -Property installdate,uninstallstring,installlocation -LastAccessTime | Where-Object {$_.installlocation}
+
+Description
+Will gather the list of programs from Server01 and retrieves the InstallDate,UninstallString and InstallLocation properties. Then filters out all products that do not have a installlocation set and displays the LastAccessTime when it can be resolved.
 #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
@@ -70,6 +79,8 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
         [Parameter(Position=0)]
         [string[]]
             $Property,
+        [switch]
+            $LastAccessTime,
         [switch]
             $ExcludeSimilar,
         [int]
@@ -88,6 +99,9 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
             if ($Property) {
                 $SelectProperty += $Property
             }
+            if ($LastAccessTime) {
+                $SelectProperty += 'LastAccessTime'
+            }
         }
     }
 
@@ -102,11 +116,32 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
                         $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
                             $HashProperty.ComputerName = $Computer
                             $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
+                            
                             if ($Property) {
                                 foreach ($CurrentProperty in $Property) {
                                     $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
                                 }
                             }
+                            
+                            if ($LastAccessTime) {
+                                $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
+                                if ($InstallPath) {
+                                    $WmiSplat = @{
+                                        ComputerName = $Computer
+                                        Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
+                                        ErrorAction  = 'SilentlyContinue'
+                                    }
+                                    $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
+                                        Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
+                                        Sort-Object -Property LastAccessed |
+                                        Select-Object -Last 1 | ForEach-Object {
+                                            $_.ConvertToDateTime($_.LastAccessed)
+                                        }
+                                } else {
+                                    $HashProperty.LastAccessTime = $null
+                                }
+                            }
+
                             if ($DisplayName) {
                                 if ($psversiontable.psversion.major -gt 2) {
                                     [pscustomobject]$HashProperty
