@@ -79,10 +79,15 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
     begin {
         $RegistryLocation = 'SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\',
                             'SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\'
-        $HashProperty = @{}
-        $SelectProperty = @('ProgramName','ComputerName')
-        if ($Property) {
-            $SelectProperty += $Property
+
+        if ($psversiontable.psversion.major -gt 2) {
+            $HashProperty = [ordered]@{}    
+        } else {
+            $HashProperty = @{}
+            $SelectProperty = @('ComputerName','ProgramName')
+            if ($Property) {
+                $SelectProperty += $Property
+            }
         }
     }
 
@@ -95,16 +100,20 @@ Will retrieve the installed programs on server01/02 that are passed on to the fu
                     $CurrentRegKey = $RegBase.OpenSubKey($CurrentReg)
                     if ($CurrentRegKey) {
                         $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
+                            $HashProperty.ComputerName = $Computer
+                            $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
                             if ($Property) {
                                 foreach ($CurrentProperty in $Property) {
                                     $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
                                 }
                             }
-                            $HashProperty.ComputerName = $Computer
-                            $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
                             if ($DisplayName) {
-                                New-Object -TypeName PSCustomObject -Property $HashProperty |
-                                Select-Object -Property $SelectProperty
+                                if ($psversiontable.psversion.major -gt 2) {
+                                    [pscustomobject]$HashProperty
+                                } else {
+                                    New-Object -TypeName PSCustomObject -Property $HashProperty |
+                                    Select-Object -Property $SelectProperty
+                                }
                             } 
                         }
                     }
