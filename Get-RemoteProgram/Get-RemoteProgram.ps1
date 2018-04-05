@@ -9,9 +9,9 @@ This function generates a list by querying the registry and returning the instal
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
-Version    : 1.3
+Version    : 1.4
 DateCreated: 2013-08-23
-DateUpdated: 2016-08-26
+DateUpdated: 2018-04-05
 Blog       : http://www.jaapbrasser.com
 
 .LINK
