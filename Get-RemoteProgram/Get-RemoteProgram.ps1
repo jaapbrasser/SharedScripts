@@ -107,77 +107,63 @@ Will gather the list of programs from Server01 and retrieves the InstallDate,Uni
 
     process {
         foreach ($Computer in $ComputerName) {
-            $RegBase = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$Computer)
-            $RegistryLocation | ForEach-Object {
-                $CurrentReg = $_
-                if ($RegBase) {
-                    $CurrentRegKey = $RegBase.OpenSubKey($CurrentReg)
-                    if ($CurrentRegKey) {
-                        $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
-                            $HashProperty.ComputerName = $Computer
-                            $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
-                            
-                            if ($Property) {
-                                foreach ($CurrentProperty in $Property) {
-                                    $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
-                                }
-                            }
-                            
-                            if ($LastAccessTime) {
-                                $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
-                                if ($InstallPath) {
-                                    $WmiSplat = @{
-                                        ComputerName = $Computer
-                                        Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
-                                        ErrorAction  = 'SilentlyContinue'
-                                    }
-                                    $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
-                                        Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
-                                        Sort-Object -Property LastAccessed |
-                                        Select-Object -Last 1 | ForEach-Object {
-                                            $_.ConvertToDateTime($_.LastAccessed)
+            try {
+                $socket = New-Object Net.Sockets.TcpClient($Computer, 445)
+                if ($socket.Connected) {
+                    $RegBase = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::LocalMachine,$Computer)
+                    $RegistryLocation | ForEach-Object {
+                        $CurrentReg = $_
+                        if ($RegBase) {
+                            $CurrentRegKey = $RegBase.OpenSubKey($CurrentReg)
+                            if ($CurrentRegKey) {
+                                $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
+                                    $HashProperty.ComputerName = $Computer
+                                    $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
+                                    
+                                    if ($Property) {
+                                        foreach ($CurrentProperty in $Property) {
+                                            $HashProperty.$CurrentProperty = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue($CurrentProperty)
                                         }
-                                } else {
-                                    $HashProperty.LastAccessTime = $null
+                                    }
+                                    
+                                    if ($LastAccessTime) {
+                                        $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
+                                        if ($InstallPath) {
+                                            $WmiSplat = @{
+                                                ComputerName = $Computer
+                                                Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
+                                                ErrorAction  = 'SilentlyContinue'
+                                            }
+                                            $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
+                                                Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
+                                                Sort-Object -Property LastAccessed |
+                                                Select-Object -Last 1 | ForEach-Object {
+                                                    $_.ConvertToDateTime($_.LastAccessed)
+                                                }
+                                        } else {
+                                            $HashProperty.LastAccessTime = $null
+                                        }
+                                    }
+
+                                    if ($DisplayName) {
+                                        if ($psversiontable.psversion.major -gt 2) {
+                                            [pscustomobject]$HashProperty
+                                        } else {
+                                            New-Object -TypeName PSCustomObject -Property $HashProperty |
+                                            Select-Object -Property $SelectProperty
+                                        }
+                                    }
+                                    $socket.Close()
                                 }
+
                             }
 
-                            if ($DisplayName) {
-                                if ($psversiontable.psversion.major -gt 2) {
-                                    [pscustomobject]$HashProperty
-                                } else {
-                                    New-Object -TypeName PSCustomObject -Property $HashProperty |
-                                    Select-Object -Property $SelectProperty
-                                }
-                            } 
                         }
+
                     }
                 }
-            } | ForEach-Object -Begin {
-                if ($SimilarWord) {
-                    $Regex = [regex]('(^(.+?\s){{0}}).*$|(.*)' -f $SimilarWord)
-                } else {
-                    $Regex = [regex]"(^(.+?\s){3}).*$|(.*)"
-                }
-                [System.Collections.ArrayList]$Array = @()
-            } -Process {
-                if ($ExcludeSimilar) {
-                    $null = $Array.Add($_)
-                } else {
-                    $_
-                }
-            } -End {
-                if ($ExcludeSimilar) {
-                    $Array | Select-Object -Property *,@{
-                        name       = 'GroupedName'
-                        expression = {
-                            ($_.ProgramName -split $Regex)[1]
-                        }
-                    } |
-                    Group-Object -Property 'GroupedName' | ForEach-Object {
-                        $_.Group[0] | Select-Object -Property * -ExcludeProperty GroupedName
-                    }
-                }
+            } catch {
+                Write-Error $_
             }
         }
     }
