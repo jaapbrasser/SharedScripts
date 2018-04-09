@@ -9,9 +9,9 @@ This function generates a list by querying the registry and returning the instal
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
-Version    : 1.4
+Version    : 1.4.1
 DateCreated: 2013-08-23
-DateUpdated: 2018-04-05
+DateUpdated: 2018-04-09
 Blog       : http://www.jaapbrasser.com
 
 .LINK
@@ -30,7 +30,7 @@ This will include the Programs matching that are specified as argument in this p
 This will exclude the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
 
 .PARAMETER ProgramRegExMatch
-This parameter will change the default behaviour of IncludeProgram and ExcludeProgram from -like operator to -match operator. This allows for more complex matching if required
+This parameter will change the default behaviour of IncludeProgram and ExcludeProgram from -like operator to -match operator. This allows for more complex matching if required.
 
 .PARAMETER LastAccessTime
 Estimates the last time the program was executed by looking in the installation folder, if it exists, and retrieves the most recent LastAccessTime attribute of any .exe in that folder. This increases execution time of this script as it requires (remotely) querying the file system to retrieve this information.
@@ -84,7 +84,13 @@ Description
 Will retrieve the InstallDate of all components that match the wildcard pattern of *office*
 
 .EXAMPLE
-Get-RemoteProgram -IncludeProgram ^Office.* -ProgramRegExMatch
+Get-RemoteProgram -Property installdate -IncludeProgram 'Microsoft Office Access','Microsoft SQL Server 2014'
+
+Description
+Will retrieve the InstallDate of all components that exactly match Microsoft Office Access & Microsoft SQL Server 2014
+
+.EXAMPLE
+Get-RemoteProgram -IncludeProgram ^Office -ProgramRegExMatch
 
 Description
 Will retrieve the InstallDate of all components that match the regex pattern of ^Office.*, which means any ProgramName starting with the word Office
@@ -100,9 +106,9 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
         [Parameter(Position=0)]
         [string[]]
             $Property,
-        [string]
+        [string[]]
             $IncludeProgram,
-        [string]
+        [string[]]
             $ExcludeProgram,
         [switch]
             $ProgramRegExMatch,
@@ -149,24 +155,32 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                     
                                     if ($IncludeProgram) {
                                         if ($ProgramRegExMatch) {
-                                            if ($DisplayName -notmatch $IncludeProgram) {
-                                                $DisplayName = $null
+                                            $IncludeProgram | ForEach-Object {
+                                                if ($DisplayName -notmatch $_) {
+                                                    $DisplayName = $null
+                                                }
                                             }
                                         } else {
-                                            if ($DisplayName -notlike $IncludeProgram) {
-                                                $DisplayName = $null
+                                            $IncludeProgram | ForEach-Object {
+                                                if ($DisplayName -notlike $_) {
+                                                    $DisplayName = $null
+                                                }
                                             }
                                         }
                                     }
 
                                     if ($ExcludeProgram) {
                                         if ($ProgramRegExMatch) {
-                                            if ($DisplayName -match $ExcludeProgram) {
-                                                $DisplayName = $null
+                                            $ExcludeProgram | ForEach-Object {
+                                                if ($DisplayName -match $_) {
+                                                    $DisplayName = $null
+                                                }
                                             }
                                         } else {
-                                            if ($DisplayName -like $ExcludeProgram) {
-                                                $DisplayName = $null
+                                            $ExcludeProgram | ForEach-Object {
+                                                if ($DisplayName -like $_) {
+                                                    $DisplayName = $null
+                                                }
                                             }
                                         }
                                     }
