@@ -9,9 +9,9 @@ This function generates a list by querying the registry and returning the instal
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
-Version    : 1.4.1
+Version    : 1.4.2
 DateCreated: 2013-08-23
-DateUpdated: 2018-04-09
+DateUpdated: 2018-09-18
 Blog       : http://www.jaapbrasser.com
 
 .LINK
@@ -90,6 +90,12 @@ Description
 Will retrieve the InstallDate of all components that exactly match Microsoft Office Access & Microsoft SQL Server 2014
 
 .EXAMPLE
+Get-RemoteProgram -Property installdate -IncludeProgram '*[10*]*' | Format-Table -Autosize > MyInstalledPrograms.txt
+
+Description
+Will retrieve the ComputerName, ProgramName and installdate of the programs matching the *[10*]* wildcard and using Format-Table and redirection to write this output to text file
+
+.EXAMPLE
 Get-RemoteProgram -IncludeProgram ^Office -ProgramRegExMatch
 
 Description
@@ -152,7 +158,7 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                 $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
                                     $HashProperty.ComputerName = $Computer
                                     $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
-                                    
+
                                     if ($IncludeProgram) {
                                         if ($ProgramRegExMatch) {
                                             $IncludeProgram | ForEach-Object {
@@ -161,10 +167,10 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                                 }
                                             }
                                         } else {
-                                            $IncludeProgram | ForEach-Object {
-                                                if ($DisplayName -notlike $_) {
+                                            $IncludeProgram | Where-Object {
+                                                $DisplayName -notlike ($_ -replace '\[','`[')
+                                            } | ForEach-Object {
                                                     $DisplayName = $null
-                                                }
                                             }
                                         }
                                     }
@@ -177,10 +183,10 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                                 }
                                             }
                                         } else {
-                                            $ExcludeProgram | ForEach-Object {
-                                                if ($DisplayName -like $_) {
+                                            $ExcludeProgram | Where-Object {
+                                                $DisplayName -like ($_ -replace '\[','`[')
+                                            } | ForEach-Object {
                                                     $DisplayName = $null
-                                                }
                                             }
                                         }
                                     }
@@ -209,7 +215,7 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                                 $HashProperty.LastAccessTime = $null
                                             }
                                         }
-                                        
+
                                         if ($psversiontable.psversion.major -gt 2) {
                                             [pscustomobject]$HashProperty
                                         } else {
