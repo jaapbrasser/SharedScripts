@@ -20,13 +20,13 @@ Helper function that creates folder, clones single branch based of a GitHub pull
     Write-Information -Message "mkdir -Path $($Values.Folder)"
     
     try {
-    mkdir -Path $Values.Folder -EA Stop
-    Set-Location $Values.Folder
-    Write-Information -Message "git clone --single-branch --branch $($Values.Branch) $($Values.GitHubUri)"
-    git clone --single-branch --branch $Values.Branch $Values.GitHubUri
+        mkdir -Path $Values.Folder -EA Stop
+        Set-Location $Values.Folder
+        Write-Information -Message "git clone --single-branch --branch $($Values.Branch) $($Values.GitHubUri)"
+        git clone --single-branch --branch $Values.Branch $Values.GitHubUri
 
-    Set-Location (Get-ChildItem).fullname
+        Set-Location (Get-ChildItem).fullname
 
-    git status
+        git status
     } catch {}
 }
