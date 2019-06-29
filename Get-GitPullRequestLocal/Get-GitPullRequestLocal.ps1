@@ -2,7 +2,13 @@ Function Get-GitPullRequestLocal {
 <#
 .SYNOPSIS
 Helper function that creates folder, clones single branch based of a GitHub pull request uri
+
+.EXAMPLE
+Get-GitPullRequestLocal -Uri https://github.com/jaapbrasser/SharedScripts/pull/29
+
+Will create a folder in C:\Temp named after the PR number, and clone the specific branch and display the git status
 #>
+
     [cmdletbinding(SupportsShouldProcess)]
     param(
         [string] $Uri,
