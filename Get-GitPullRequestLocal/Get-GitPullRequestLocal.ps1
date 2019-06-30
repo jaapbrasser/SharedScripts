@@ -26,6 +26,7 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
     Write-Information -Message "mkdir -Path $($Values.Folder)"
     
     try {
+        # Create folder and clone branch to folder
         mkdir -Path $Values.Folder -EA Stop
         Set-Location $Values.Folder
         Write-Information -Message "git clone --single-branch --branch $($Values.Branch) $($Values.GitHubUri)"
@@ -33,6 +34,7 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
 
         Set-Location (Get-ChildItem).fullname
 
+        # Retrieve status of the current branch
         git status
     } catch {}
 }
