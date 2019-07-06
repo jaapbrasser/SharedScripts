@@ -3,6 +3,9 @@ Function Get-GitPullRequestLocal {
 .SYNOPSIS
 Helper function that creates folder, clones single branch based of a GitHub pull request uri
 
+.DESCRIPTION
+This function is created to simplify working with pull requests. In order to get all the files on tbe local system in an organized method, I decided to group together these commands.
+
 .EXAMPLE
 Get-GitPullRequestLocal -Uri https://github.com/jaapbrasser/SharedScripts/pull/29
 
