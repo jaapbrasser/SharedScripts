@@ -1,6 +1,9 @@
 ﻿#region Functions
-# Function to convert the query provided in -ExcludeDate to a format that can be parsed by the ConvertTo-DateObject function
 function ConvertFrom-DateQuery {
+<#
+.SYNOPSIS
+Function to convert the query provided in -ExcludeDate to a format that can be parsed by the ConvertTo-DateObject function
+#>
 param (
     [Parameter(Mandatory=$true,
                ValueFromPipeline
