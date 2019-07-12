@@ -17,7 +17,6 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
         [string] $Uri,
         [string] $Path = 'C:\Temp'
     )
-    
 
     $Request = Invoke-WebRequest $Uri
 
