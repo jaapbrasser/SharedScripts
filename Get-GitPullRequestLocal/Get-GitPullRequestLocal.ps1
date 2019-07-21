@@ -15,7 +15,8 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
     [cmdletbinding(SupportsShouldProcess)]
     param(
         [string] $Uri,
-        [string] $Path = 'C:\Temp'
+        [string] $Path = 'C:\Temp',
+        [switch] $NoCode
     )
 
     $Request = Invoke-WebRequest $Uri
@@ -36,6 +37,12 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
         git clone --single-branch --branch $Values.Branch $Values.GitHubUri
 
         Set-Location (Get-ChildItem).fullname
+        
+        # open VScode
+        If (!$nocode) {
+            code .
+        }
+
 
         # Retrieve status of the current branch
         git status
