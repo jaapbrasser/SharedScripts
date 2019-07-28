@@ -14,7 +14,9 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
 
     [cmdletbinding(SupportsShouldProcess)]
     param(
+        # URI of the pull request
         [string] $Uri,
+        # The path where the PRs will be cloned to, defaults to C:\Windows, should be specified on non-Windows systems
         [string] $Path = 'C:\Temp',
         # If this parameter is specified VScode will not automatically open after pulling in the PR
         [switch] $NoCode
