@@ -41,6 +41,12 @@ This will filter out similar programnames, the default value is to filter on the
 .PARAMETER SimilarWord
 This parameter only works when ExcludeSimilar is specified, it changes the default of first 3 words to any desired value.
 
+.PARAMETER DisplayRegPath
+Displays the registry path as well as the program name
+
+.PARAMETER MicrosoftStore
+Also queries the package list reg key, allows for listing Microsoft Store products for current user
+
 .EXAMPLE
 Get-RemoteProgram
 
