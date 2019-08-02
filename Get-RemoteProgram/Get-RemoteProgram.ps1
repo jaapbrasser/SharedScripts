@@ -9,9 +9,9 @@ This function generates a list by querying the registry and returning the instal
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
-Version    : 1.4.2
+Version    : 1.5
 DateCreated: 2013-08-23
-DateUpdated: 2018-09-18
+DateUpdated: 2019-08-02
 Blog       : http://www.jaapbrasser.com
 
 .LINK
@@ -100,6 +100,18 @@ Get-RemoteProgram -IncludeProgram ^Office -ProgramRegExMatch
 
 Description
 Will retrieve the InstallDate of all components that match the regex pattern of ^Office.*, which means any ProgramName starting with the word Office
+
+.EXAMPLE
+Get-RemoteProgram -DisplayRegPath
+
+Description
+Will retrieve list of programs from the local system and displays the registry path
+
+.EXAMPLE
+Get-RemoteProgram -DisplayRegPath -MicrosoftStore
+
+Description
+Will retrieve list of programs from the local system, while also retrieving Microsoft Store package and displaying the registry path
 #>
     [CmdletBinding(SupportsShouldProcess=$true)]
     param(
@@ -122,6 +134,10 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
             $LastAccessTime,
         [switch]
             $ExcludeSimilar,
+        [switch]
+            $DisplayRegPath,
+        [switch]
+            $MicrosoftStore,
         [int]
             $SimilarWord
     )
@@ -149,7 +165,22 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
             try {
                 $socket = New-Object Net.Sockets.TcpClient($Computer, 445)
                 if ($socket.Connected) {
-                    'LocalMachine','CurrentUser' | ForEach-Object {
+                    'LocalMachine', 'CurrentUser' | ForEach-Object {
+                        $RegName = if ('LocalMachine' -eq $_) {
+                            'HKLM:\'
+                        } else {
+                            'HKCU:\'
+                        }
+
+                        if ($MicrosoftStore) {
+                            $MSStoreRegPath = 'Software\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\AppModel\Repository\Packages\'
+                            if ('HKCU:\' -eq $RegName) {
+                                if ($RegistryLocation -notcontains $MSStoreRegPath) {
+                                    $RegistryLocation = $MSStoreRegPath
+                                }
+                            }
+                        }
+                        
                         $RegBase = [Microsoft.Win32.RegistryKey]::OpenRemoteBaseKey([Microsoft.Win32.RegistryHive]::$_,$Computer)
                         $RegistryLocation | ForEach-Object {
                             $CurrentReg = $_
@@ -157,9 +188,19 @@ Will retrieve the InstallDate of all components that match the regex pattern of 
                                 $CurrentRegKey = $RegBase.OpenSubKey($CurrentReg)
                                 if ($CurrentRegKey) {
                                     $CurrentRegKey.GetSubKeyNames() | ForEach-Object {
+                                        Write-Verbose -Message ('{0}{1}{2}' -f $RegName, $CurrentReg, $_)
+
+                                        $DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName')
+                                        if (($DisplayName -match '^@{.*?}$') -and ($CurrentReg -eq $MSStoreRegPath)) {
+                                            $DisplayName = $DisplayName  -replace '.*?\/\/(.*?)\/.*','$1'
+                                        }
+
                                         $HashProperty.ComputerName = $Computer
-                                        $HashProperty.ProgramName = ($DisplayName = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('DisplayName'))
-                                        #$HashProperty.RegPath = "$CurrentReg$_"
+                                        $HashProperty.ProgramName = $DisplayName
+                                        
+                                        if ($DisplayRegPath) {
+                                            $HashProperty.RegPath = '{0}{1}{2}' -f $RegName, $CurrentReg, $_
+                                        } 
 
                                         if ($IncludeProgram) {
                                             if ($ProgramRegExMatch) {
