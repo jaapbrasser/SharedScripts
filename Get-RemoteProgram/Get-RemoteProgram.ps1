@@ -9,43 +9,13 @@ This function generates a list by querying the registry and returning the instal
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
-Version    : 1.5
+Version    : 1.5.1
 DateCreated: 2013-08-23
-DateUpdated: 2019-08-02
+DateUpdated: 2019-08-03
 Blog       : http://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
-
-.PARAMETER ComputerName
-The computer to which connectivity will be checked
-
-.PARAMETER Property
-Additional values to be loaded from the registry. Can contain a string or an array of string that will be attempted to retrieve from the registry for each program entry
-
-.PARAMETER IncludeProgram
-This will include the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
-
-.PARAMETER ExcludeProgram
-This will exclude the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
-
-.PARAMETER ProgramRegExMatch
-This parameter will change the default behaviour of IncludeProgram and ExcludeProgram from -like operator to -match operator. This allows for more complex matching if required.
-
-.PARAMETER LastAccessTime
-Estimates the last time the program was executed by looking in the installation folder, if it exists, and retrieves the most recent LastAccessTime attribute of any .exe in that folder. This increases execution time of this script as it requires (remotely) querying the file system to retrieve this information.
-
-.PARAMETER ExcludeSimilar
-This will filter out similar programnames, the default value is to filter on the first 3 words in a program name. If a program only consists of less words it is excluded and it will not be filtered. For example if you Visual Studio 2015 installed it will list all the components individually, using -ExcludeSimilar will only display the first entry.
-
-.PARAMETER SimilarWord
-This parameter only works when ExcludeSimilar is specified, it changes the default of first 3 words to any desired value.
-
-.PARAMETER DisplayRegPath
-Displays the registry path as well as the program name
-
-.PARAMETER MicrosoftStore
-Also queries the package list reg key, allows for listing Microsoft Store products for current user
 
 .EXAMPLE
 Get-RemoteProgram
@@ -126,26 +96,36 @@ Will retrieve list of programs from the local system, while also retrieving Micr
                    Position=0
         )]
         [string[]]
-            $ComputerName = $env:COMPUTERNAME,
+        # The computer to which connectivity will be checked and installed program information will be retrieved
+        $ComputerName = $env:COMPUTERNAME,
         [Parameter(Position=0)]
         [string[]]
-            $Property,
+        # Additional values to be loaded from the registry. Can contain a string or an array of string that will be attempted to retrieve from the registry for each program entry
+        $Property,
         [string[]]
-            $IncludeProgram,
+        # This will include the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
+        $IncludeProgram,
         [string[]]
-            $ExcludeProgram,
+        # This will exclude the Programs matching that are specified as argument in this parameter. Wildcards are allowed. Both Include- and ExcludeProgram can be specified, where IncludeProgram will be matched first
+        $ExcludeProgram,
         [switch]
-            $ProgramRegExMatch,
+        # This parameter will change the default behaviour of IncludeProgram and ExcludeProgram from -like operator to -match operator. This allows for more complex matching if required.
+        $ProgramRegExMatch,
         [switch]
-            $LastAccessTime,
+        # Estimates the last time the program was executed by looking in the installation folder, if it exists, and retrieves the most recent LastAccessTime attribute of any .exe in that folder. This increases execution time of this script as it requires (remotely) querying the file system to retrieve this information.
+        $LastAccessTime,
         [switch]
-            $ExcludeSimilar,
+        # This will filter out similar program names, the default value is to filter on the first 3 words in a program name. If a program only consists of less words it is excluded and it will not be filtered. For example if you Visual Studio 2015 installed it will list all the components individually, using -ExcludeSimilar will only display the first entry.
+        $ExcludeSimilar,
         [switch]
-            $DisplayRegPath,
+        # Displays the registry path as well as the program name
+        $DisplayRegPath,
         [switch]
-            $MicrosoftStore,
+        # Also queries the package list reg key, allows for listing Microsoft Store products for current user
+        $MicrosoftStore,
         [int]
-            $SimilarWord
+        # This parameter only works when ExcludeSimilar is specified, it changes the default of first 3 words to any desired value.
+        $SimilarWord
     )
 
     begin {
