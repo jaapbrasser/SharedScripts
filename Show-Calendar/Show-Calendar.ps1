@@ -1,13 +1,32 @@
 Function Show-Calendar {
+<#
+.Synopsis
+Generates a list of installed programs on a computer
+
+.DESCRIPTION
+This function generates a list by querying the registry and returning the installed programs of a local or remote computer.
+
+.NOTES   
+Name       : Get-RemoteProgram
+Author     : Jaap Brasser
+Version    : 1.1
+DateCreated: 2013-08-23
+Blog       : http://www.jaapbrasser.com
+
+.LINK
+http://www.jaapbrasser.com
+#>
     Param(
-        $Week,
-        $Month,
-        $Year
+        # The month number of which the calendar should be displayed, can be used in combination with the -Year parameter
+        [validaterange(1,12)]
+        [int] $Month,
+        # The year of which the calendar should be displayed, can be used in combination with the -Month parameter
+        [validaterange(1,9999)]
+        [int] $Year
     )
     $SplatDate = @{}
     switch ($true)
     {
-        {$Week} {$SplatDate.Week = $Week}
         {$Month} {$SplatDate.Month = $Month}
         {$Year} {$SplatDate.Year = $Year}
     }
