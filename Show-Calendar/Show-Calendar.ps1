@@ -15,6 +15,18 @@ Blog       : http://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
+
+.EXAMPLE
+Show-Calendar
+
+Description:
+Shows the of the current month
+
+.EXAMPLE
+Show-Calendar -Month 9 -Year 1983
+
+Description:
+Shows the calendar for September 1983
 #>
     Param(
         # The month number of which the calendar should be displayed, can be used in combination with the -Year parameter
