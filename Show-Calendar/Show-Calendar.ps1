@@ -37,5 +37,3 @@ Function Show-Calendar {
     }
     $DisplayLine
 }
-
-Show-Calendar
