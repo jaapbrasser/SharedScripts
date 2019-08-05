@@ -1,16 +1,16 @@
 Function Show-Calendar {
 <#
 .Synopsis
-Generates a list of installed programs on a computer
+Displays the calendar in a short text based way
 
 .DESCRIPTION
-This function generates a list by querying the registry and returning the installed programs of a local or remote computer.
+Displays either the current month or another month which can be specified by usiong the -Year and -Month parameters
 
 .NOTES   
 Name       : Get-RemoteProgram
 Author     : Jaap Brasser
 Version    : 1.1
-DateCreated: 2013-08-23
+DateCreated: 2019-08-05
 Blog       : http://www.jaapbrasser.com
 
 .LINK
