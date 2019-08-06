@@ -66,5 +66,5 @@ Shows the calendar for September 1983
             $DisplayLine = ''
         }
     }
-    $DisplayLine
+    Write-Output -InputObject $DisplayLine
 }
