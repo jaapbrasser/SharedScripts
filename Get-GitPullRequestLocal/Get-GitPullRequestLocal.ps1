@@ -19,7 +19,9 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
         # The path where the PRs will be cloned to, defaults to C:\Windows, should be specified on non-Windows systems
         [string] $Path = 'C:\Temp',
         # If this parameter is specified VScode will not automatically open after pulling in the PR
-        [switch] $NoCode
+        [switch] $NoCode,
+        # If this parameter explorer will be launched in current path
+        [switch] $Explorer
     )
 
     $Request = Invoke-WebRequest $Uri
@@ -48,5 +50,9 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
         If (!$nocode) {
             code .
         }
-} catch {}
+
+        if ($Explorer) {
+            explorer.exe .
+        }
+    } catch {}
 }
