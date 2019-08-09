@@ -15,8 +15,8 @@ param(
     
     if ('VB' -eq $GUIType) {
         [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
-        $InputBox = [Microsoft.VisualBasic.Interaction]::InputBox("Let's convert this to base64", $Title, $null)
-        $InputBox = [convert]::ToBase64String([char[]]$InputBox)
-        [Microsoft.VisualBasic.Interaction]::MsgBox($InputBox,0,$Title)
+        [Microsoft.VisualBasic.Interaction]::InputBox("Let's convert this to base64", $Title, $null) | ForEach-Object {
+            [Microsoft.VisualBasic.Interaction]::MsgBox([convert]::ToBase64String([char[]]$_),0,$Title)
+        }
     }
 }
