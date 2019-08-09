@@ -13,10 +13,14 @@ param(
     [string] $GUIType = 'VB'
 )
     
-    if ('VB' -eq $GUIType) {
-        [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
-        [Microsoft.VisualBasic.Interaction]::InputBox("Let's convert this to base64", $Title, $null) | ForEach-Object {
-            [Microsoft.VisualBasic.Interaction]::MsgBox([convert]::ToBase64String([char[]]$_),0,$Title)
+    switch ($GUIType) {
+        'VB'        {
+            [System.Reflection.Assembly]::LoadWithPartialName('Microsoft.VisualBasic') | Out-Null
+            [Microsoft.VisualBasic.Interaction]::InputBox("Let's convert this to base64", $Title, $null) | ForEach-Object {
+                [Microsoft.VisualBasic.Interaction]::MsgBox([convert]::ToBase64String([char[]]$_),0,$Title)
+            }
+        }
+        default     {
         }
     }
 }
