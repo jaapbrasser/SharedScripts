@@ -50,7 +50,7 @@ param(
             $Form.Controls.Add($FormInput)
             $Form.Controls.Add($FormOKButton)
             $Form.ShowDialog() | ForEach-Object {
-                 [convert]::ToBase64String([char[]]$FormInputText)
+                [System.Windows.Forms.MessageBox]::Show([convert]::ToBase64String([char[]]$FormInputText),$Title)
             }
         }
         default     {
