@@ -21,6 +21,8 @@ param(
             }
         }
         'Forms' {
+            Add-Type -AssemblyName System.Windows.Forms
+            Add-Type -AssemblyName System.Drawing
             $Form = New-Object System.Windows.Forms.Form -Property @{
                 Text = $Title
                 Size = New-Object System.Drawing.Size(300,150)
