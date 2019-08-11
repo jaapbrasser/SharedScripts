@@ -9,7 +9,7 @@ This function contains various examples of using the GUI capabilities of both Wi
 
 param(
     [string] $Title = 'Example Title...',
-    [validateset('VB')]
+    [validateset('VB','Forms')]
     [string] $GUIType = 'VB'
 )
     
@@ -20,7 +20,7 @@ param(
                 [Microsoft.VisualBasic.Interaction]::MsgBox([convert]::ToBase64String([char[]]$_),0,$Title)
             }
         }
-        'Windows.Forms' {
+        'Forms' {
             $Form = New-Object System.Windows.Forms.Form -Property @{
                 Text = $Title
                 Size = New-Object System.Drawing.Size(300,150)
@@ -50,7 +50,7 @@ param(
             $Form.Controls.Add($FormInput)
             $Form.Controls.Add($FormOKButton)
             $Form.ShowDialog() | ForEach-Object {
-                [System.Windows.Forms.MessageBox]::Show([convert]::ToBase64String([char[]]$FormInputText),$Title)
+                [System.Windows.Forms.MessageBox]::Show([convert]::ToBase64String([char[]]$FormInputText),$Title) | Out-Null
             }
         }
         default     {
