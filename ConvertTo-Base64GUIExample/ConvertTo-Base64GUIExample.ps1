@@ -44,15 +44,14 @@ param(
                 Size = New-Object System.Drawing.Size(40,23)
                 Text = "OK"
             }
-            $FormOKButton.Add_Click({$Script:userInput=$FormInput.Text;$Form.Close()})
+            $FormOKButton.Add_Click({$Script:FormInputText=$FormInput.Text;$Form.Close()})
             
             $Form.Controls.Add($FormText)
             $Form.Controls.Add($FormInput)
             $Form.Controls.Add($FormOKButton)
-            $Form.ShowDialog() 
-            # | ForEach-Object {
-            #     [convert]::ToBase64String([char[]]$_)
-            # }
+            $Form.ShowDialog() | ForEach-Object {
+                 [convert]::ToBase64String([char[]]$FormInputText)
+            }
         }
         default     {
         }
