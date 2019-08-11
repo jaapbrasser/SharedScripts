@@ -8,7 +8,7 @@ This function contains various examples of using the GUI capabilities of both Wi
 #>
 
 param(
-    [string] $Title,
+    [string] $Title = 'Example Title...',
     [validateset('VB')]
     [string] $GUIType = 'VB'
 )
