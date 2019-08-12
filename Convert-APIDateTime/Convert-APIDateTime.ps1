@@ -4,18 +4,18 @@ function Convert-APIDateTime {
 Function to convert specific date time format from API endpoint to a datetime object
 
 .EXAMPLE
-"Thu Aug 08 20:31:36 UTC 2019" | Convert-APIDateTime
+Convert-APIDateTime "Thu Aug 08 20:31:36 UTC 2019" 
 
 Thursday, August 8, 2019 8:31:36 PM
 #>
+    [cmdletbinding()]
     param(
         [parameter(
             Position = 0,
             Mandatory = $true,
-            ValueFromPipelineByPropertyName = $true,
             ValueFromPipeline = $true
         )]
-        [ValidateNotNullOrEmpty]
+        [ValidateNotNullOrEmpty()]
         [string] $DateTimeString
     )
 
