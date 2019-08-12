@@ -32,7 +32,7 @@ Thursday, August 8, 2019 8:31:36 PM
     }
 
     process {
-        $NewDateTimeString = "Thu Aug 08 20:31:36 UTC 2019".Substring(4) -replace 'UTC '
+        $NewDateTimeString = $DateTimeString.Substring(4) -replace 'UTC '
         $MonthHash.GetEnumerator() | ForEach-Object {
             $NewDateTimeString = $NewDateTimeString -replace $_.Key,$_.Value
         }
