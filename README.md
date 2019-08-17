@@ -10,3 +10,8 @@ stores are also available for download in the Microsoft TechNet Script Gallery:
 
 Many of the scripts have also been featured on my blog as well:
 [Tag - TechNet - JaapBrasser.com](https://www.jaapbrasser.com/tag/technet/)
+
+### Individual posts
+
+All individual blog posts can be found here:
+*
