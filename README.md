@@ -14,4 +14,4 @@ Many of the scripts have also been featured on my blog as well:
 ### Individual posts
 
 All individual blog posts can be found here:
-*
+* [250000 Downloads in Technet Script Gallery](https://www.jaapbrasser.com/250000-downloads-in-technet-script-gallery/)
