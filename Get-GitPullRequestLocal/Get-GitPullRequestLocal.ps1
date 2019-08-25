@@ -51,6 +51,8 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
             code .
         }
 
+
+        # Open explorer inn the current path, only works on Windows
         if ($Explorer) {
             explorer.exe .
         }
