@@ -24,6 +24,8 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
         [switch] $Explorer
     )
 
+#add validation here or in param block
+
     $Request = Invoke-WebRequest $Uri
 
     $Values = @{
