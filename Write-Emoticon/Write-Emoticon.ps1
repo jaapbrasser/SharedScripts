@@ -1,4 +1,18 @@
 function Write-Emoticon {
+<#
+.SYNOPSIS
+Function that writes a series of random unicode animals to the console
+
+.NOTES   
+Name:        Write-Emoticon
+Author:      Jaap Brasser
+DateCreated: 2019-09-20
+DateUpdated: 2019-09-20
+Version:     1.0.0
+Blog:        https://www.jaapbrasser.com
+GitHub:      https://www.github.com/jaapbrasser
+#>
+
     param(
         # Number of emoticons showed
         [int] $Times,
