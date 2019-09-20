@@ -1,6 +1,9 @@
 function Write-Emoticon {
     param(
-        [int] $Times
+        # Number of emoticons showed
+        [int] $Times,
+        # Delay in milliseconds, set to 50ms as a default value 
+        [int] $Delay = 50
     )
     
     if ($Times) {
