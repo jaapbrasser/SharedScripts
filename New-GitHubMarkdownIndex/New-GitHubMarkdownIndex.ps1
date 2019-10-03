@@ -11,5 +11,5 @@ function New-GitHubMarkdownIndex {
             $GHPath = $_ -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
             "$(" "*$Count*2)* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
         }
-    } #| clip.exe
+    } | clip.exe
 }
