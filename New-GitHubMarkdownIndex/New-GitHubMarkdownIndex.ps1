@@ -3,7 +3,7 @@ function New-GitHubMarkdownIndex {
         $Path = 'C:\Temp\Events',
         $GitHubUri = 'https://github.com/jaapbrasser/events/tree/master'
     )
-    get-childitem | % {
+    get-childitem -LiteralPath $Path | % {
         $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
         "* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
         $_ | ls -recurse | ? {$_.PSIsContainer -or $_.Extension -eq '.md'} | select -exp fullname | % {
