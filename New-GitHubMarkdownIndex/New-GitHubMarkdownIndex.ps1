@@ -1,8 +1,12 @@
 function New-GitHubMarkdownIndex {
     param(
+        # The path of the file structure that will be mapped in markdown
         [string] $Path = 'C:\Temp\Events',
+        # The GitHub uri that files will be linked to
         [string] $GitHubUri = 'https://github.com/jaapbrasser/events/tree/master',
-        [string[]] $IncludeExtensions = @('.md','pdf','.123','123','234','.234'),
+        # Included file types, specified by extension
+        [string[]] $IncludeExtensions = @('.md','pdf'),
+        # Whether to use clip.exe or to output to console
         [switch] $NoClipBoard
     )
     
