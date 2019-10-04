@@ -1,7 +1,7 @@
 function New-GitHubMarkdownIndex {
 <#
 .SYNOPSIS
-Confusion to generate an index to be used in markdown files
+Function to generate an index to be used in markdown files
 #>
     param(
         $Path = 'C:\Temp\Events',
