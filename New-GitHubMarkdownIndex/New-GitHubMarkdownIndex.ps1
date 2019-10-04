@@ -1,4 +1,8 @@
 function New-GitHubMarkdownIndex {
+<#
+.SYNOPSIS
+Confusion to generate an index to be used in markdown files
+#>
     param(
         $Path = 'C:\Temp\Events',
         $GitHubUri = 'https://github.com/jaapbrasser/events/tree/master'
