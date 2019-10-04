@@ -23,10 +23,12 @@ function New-GitHubMarkdownIndex {
             Get-ChildItem -LiteralPath $Path | ForEach-Object {
                 $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
                 "* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
-                $_ | Get-ChildItem -Recurse | ? {$_.PSIsContainer -or $_.Extension -in $IncludeExtensions} | ForEach-Object {
-                    $Count = ($_.FullName -split '\\').Count-($Path.Split('\').Count+1)
-                    $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
-                    "$(" "*$Count*2)* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
+                if ($_.PSIsContainer) {
+                    $_ | Get-ChildItem -Recurse | ? {$_.PSIsContainer -or $_.Extension -in $IncludeExtensions} | ForEach-Object {
+                        $Count = ($_.FullName -split '\\').Count-($Path.Split('\').Count+1)
+                        $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
+                        "$(" "*$Count*2)* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
+                    }
                 }
             }
         }
