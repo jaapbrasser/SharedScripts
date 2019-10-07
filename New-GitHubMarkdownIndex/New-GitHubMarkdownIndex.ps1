@@ -1,4 +1,8 @@
 function New-GitHubMarkdownIndex {
+<#
+.SYNOPSIS
+Function to generate an index to be used in markdown files
+#>
     param(
         # The path of the file structure that will be mapped in markdown
         [string] $Path = 'C:\Temp\Events',
@@ -18,7 +22,7 @@ function New-GitHubMarkdownIndex {
                 $_
             }
         }
-        
+
         $BuildMarkDown = {
             Get-ChildItem -LiteralPath $Path | ForEach-Object {
                 $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
