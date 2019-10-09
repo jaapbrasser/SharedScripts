@@ -2,6 +2,9 @@ function New-GitHubMarkdownIndex {
 <#
 .SYNOPSIS
 Function to generate an index to be used in markdown files
+
+.DESCRIPTION
+This function looks at a file structure and creates a tree representation in markdown. This can be used as an index for GitHub projects, options for specifying specific file formats are included in this function
 #>
     param(
         # The path of the file structure that will be mapped in markdown
