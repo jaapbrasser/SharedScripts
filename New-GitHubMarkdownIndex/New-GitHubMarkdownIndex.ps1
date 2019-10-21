@@ -11,7 +11,7 @@ This function looks at a file structure and creates a tree representation in mar
         # The path of the file structure that will be mapped in markdown
         [string] $Path = 'C:\Temp\Events',
         # The GitHub full GitHub uri that files will be linked to
-        [Parameter(ParameterSetName='Uri',Mandatory=$true)]
+        [Parameter(ParameterSetName='Uri',Mandatory=$false)]
         [string] $GitHubUri = 'https://github.com/jaapbrasser/events/tree/master',
         # The GitHub Account that should be linked to
         [Parameter(ParameterSetName='AccRepo',Mandatory=$true)]
