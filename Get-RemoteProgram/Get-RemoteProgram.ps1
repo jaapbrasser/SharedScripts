@@ -234,12 +234,20 @@ Will retrieve list of programs from the local system, while also retrieving Micr
                                                         Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
                                                         ErrorAction  = 'SilentlyContinue'
                                                     }
-                                                    $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
-                                                        Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
-                                                        Sort-Object -Property LastAccessed |
-                                                        Select-Object -Last 1 | ForEach-Object {
-                                                            $_.ConvertToDateTime($_.LastAccessed)
-                                                        }
+                                                    
+                                                    if (Get-Command -Name Get-CimInstance -Module CimCmdlets) {
+                                                            $HashProperty.LastAccessTime = Get-CimInstance @WmiSplat |
+                                                            Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
+                                                            Sort-Object -Property LastAccessed |
+                                                            Select-Object -Last 1 -ExpandProperty LastAccessed
+                                                    } else {
+                                                        $HashProperty.LastAccessTime = Get-WmiObject @WmiSplat |
+                                                            Where-Object {$_.Extension -eq 'exe' -and $_.LastAccessed} |
+                                                            Sort-Object -Property LastAccessed |
+                                                            Select-Object -Last 1 | ForEach-Object {
+                                                                $_.ConvertToDateTime($_.LastAccessed)
+                                                            }
+                                                    }
                                                 } else {
                                                     $HashProperty.LastAccessTime = $null
                                                 }
