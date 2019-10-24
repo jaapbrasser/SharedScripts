@@ -228,7 +228,7 @@ Will retrieve list of programs from the local system, while also retrieving Micr
                                             }
                                             if ($LastAccessTime) {
                                                 $InstallPath = ($RegBase.OpenSubKey("$CurrentReg$_")).GetValue('InstallLocation') -replace '\\$',''
-                                                if ($InstallPath) {
+                                                if (-not [string]::IsNullOrEmpty($InstallPath)) {
                                                     $WmiSplat = @{
                                                         ComputerName = $Computer
                                                         Query        = $("ASSOCIATORS OF {Win32_Directory.Name='$InstallPath'} Where ResultClass = CIM_DataFile")
