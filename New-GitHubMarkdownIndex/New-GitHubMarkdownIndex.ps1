@@ -22,7 +22,9 @@ This function looks at a file structure and creates a tree representation in mar
         # Included file types, specified by extension
         [string[]] $IncludeExtensions = @('.md','pdf'),
         # Whether to use clip.exe or to output to console
-        [switch] $NoClipBoard
+        [switch] $NoClipBoard,
+        # File exclusion list
+        [string[]] $ExcludeFile = @('license')
     )
     
     begin {
@@ -40,13 +42,21 @@ This function looks at a file structure and creates a tree representation in mar
 
         $BuildMarkDown = {
             Get-ChildItem -LiteralPath $Path | ForEach-Object {
-                $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
-                "* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
-                if ($_.PSIsContainer) {
-                    $_ | Get-ChildItem -Recurse | ? {$_.PSIsContainer -or $_.Extension -in $IncludeExtensions} | ForEach-Object {
-                        $Count = ($_.FullName -split '\\').Count-($Path.Split('\').Count+1)
-                        $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
-                        "$(" "*$Count*2)* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
+                if ((-not $_.PSIsContainer) -and ($ExcludeFile -contains $_.name)) {
+                    # Do nothing
+                } else {
+                    $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
+                    "* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
+                    if ($_.PSIsContainer) {
+                        $_ | Get-ChildItem -Recurse | ? {$_.PSIsContainer -or $_.Extension -in $IncludeExtensions} | ForEach-Object {
+                            if ((-not $_.PSIsContainer) -and ($ExcludeFile -contains $_.name)) {
+                                # Do nothing
+                            } else {
+                                $Count = ($_.FullName -split '\\').Count-($Path.Split('\').Count+1)
+                                $GHPath = $_.FullName -replace [regex]::Escape($Path) -replace '\\','/' -replace '\s','%20'
+                                "$(" "*$Count*2)* [$(Split-Path $_ -Leaf)]($GitHubUri$GHPath)"
+                            }
+                        }
                     }
                 }
             }
