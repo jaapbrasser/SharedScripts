@@ -10,6 +10,11 @@ This function looks at a file structure and creates a tree representation in mar
 New-GitHubMarkdownIndex
 
 Will execute with default values and generate a markdown file, copying the results to the clipboard
+
+.EXAMPLE
+New-GitHubMarkdownIndex -GitHubAccount jaapbrasser -GitHubRepo SharedScripts -Path C:\Temp\SharedScripts
+
+Will run against the jaapbrasser account, sharedscripts repository and will look in the C:\Temp\SharedScripts for the local files.
 #>
     [cmdletbinding(SupportsShouldProcess,DefaultParametersetName='Uri')]
     param(
