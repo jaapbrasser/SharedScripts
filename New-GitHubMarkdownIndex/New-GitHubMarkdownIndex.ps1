@@ -5,6 +5,11 @@ Function to generate an index to be used in markdown files
 
 .DESCRIPTION
 This function looks at a file structure and creates a tree representation in markdown. This can be used as an index for GitHub projects, options for specifying specific file formats are included in this function
+
+.EXAMPLE
+New-GitHubMarkdownIndex
+
+Will execute with default values and generate a markdown file, copying the results to the clipboard
 #>
     [cmdletbinding(SupportsShouldProcess,DefaultParametersetName='Uri')]
     param(
