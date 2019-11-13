@@ -77,7 +77,11 @@ Will run against the jaapbrasser account, sharedscripts repository and will look
         if ($NoClipBoard) {
             $BuildMarkDown.Invoke()
         } else {
-            $BuildMarkDown.Invoke() | clip.exe
+            if (Get-Command -Name Set-Clipboard -ErrorAction SilentlyContinue) {
+                $BuildMarkDown.Invoke() | Set-Clipboard
+            } else {
+                $BuildMarkDown.Invoke() | clip
+            }
         }
     }
 }
