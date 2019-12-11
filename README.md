@@ -21,4 +21,4 @@ All individual blog posts can be found here:
 * [150000 Downloads: A personal milestone](https://www.jaapbrasser.com/150000-downloads-a-personal-milestone/)
 * [Disconnect-LoggedOnUser – Disconnect a RDP session remotely](https://www.jaapbrasser.com/disconnect-loggedonuser-disconnect-a-rdp-session-remotely/)
 * [Get-LocalLastLogonTime – Get the lastlogin time on a local system](https://www.jaapbrasser.com/get-locallastlogontime-get-the-lastlogin-time-of-a-user-on-a-local-system/)
-* []()
+* []( )
