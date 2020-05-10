@@ -191,8 +191,6 @@ $ListOfFolders | ForEach-Object {
             }
         }
 
-        if ()
-
         # Output the object
         New-Object -TypeName PSCustomObject -Property $HashProps
     
