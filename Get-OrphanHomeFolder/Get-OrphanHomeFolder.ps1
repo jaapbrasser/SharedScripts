@@ -168,7 +168,7 @@ $ListOfFolders | ForEach-Object {
     # If no matching samaccountname is found this code is executed and displayed
     if (!($ADResult)) {
         $HashProps = @{
-            'Error' = 'Account does not exist and has a home folder'
+            'Message' = 'Account does not exist and has a home folder'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
@@ -197,7 +197,7 @@ $ListOfFolders | ForEach-Object {
     # If samaccountname is found but the account is disabled this information is displayed
     } elseif (([boolean]((-join $ADResult.Properties.useraccountcontrol) -band 2))) {
         $HashProps = @{
-            'Error' = 'Account is disabled and has a home folder'
+            'Message' = 'Account is disabled and has a home folder'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
@@ -222,7 +222,7 @@ $ListOfFolders | ForEach-Object {
     # Folders that do have active user accounts are displayed if -DisplayAll switch is set
     } elseif ($ADResult -and $DisplayAll) {
         $HashProps = @{
-            'Error' = $null
+            'Message' = 'Account is active'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
