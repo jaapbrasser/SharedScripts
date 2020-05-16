@@ -1,5 +1,5 @@
 # SharedScripts
-This is a collection of scripts that I have shared online.
+This is a collection of scripts that are shared online.
 
 ## TechNet Gallery
 
