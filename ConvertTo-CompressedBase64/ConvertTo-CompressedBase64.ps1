@@ -1,4 +1,8 @@
-﻿Function ConvertTo-CompressedBase64 {
+Function ConvertTo-CompressedBase64 {
+<#
+.SYNOPSIS
+Function to convert a string to a Compressed base64 string
+#>
     [cmdletbinding()]
     param(
         [Parameter(
