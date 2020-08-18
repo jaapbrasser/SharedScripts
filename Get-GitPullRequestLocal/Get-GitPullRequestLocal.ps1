@@ -29,7 +29,7 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
     $Request = Invoke-WebRequest $Uri
 
     $Values = @{
-        Folder = '{0}\PR{1}' -f $Path, (($Uri -replace '\/$').Split('/')[-1])
+        Folder = '{0}\{1}_PR{2}' -f $Path, (($Uri -replace '\/$').Split('/')[4]), (($Uri -replace '\/$').Split('/')[-1])
         GitHubUri = 'https://github.com/{0}' -f $Request.Links.Where{$_.class -eq 'no-underline'}[1].title.split(':')[0]
         Branch = $Request.Links.Where{$_.class -eq 'no-underline'}[1].title.split(':')[1]
     }
