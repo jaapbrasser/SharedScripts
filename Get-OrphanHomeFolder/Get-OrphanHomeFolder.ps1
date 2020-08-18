@@ -35,17 +35,20 @@ Setting this switch parameter will handle the strings in the ExcludePath paramet
 .PARAMETER CheckHomeDirectory
 Setting this switch parameter will check the full path of the folder against the HomeDirectory attribute of an ADObject, when using this switch make sure that the correct shared folder or DFS path is used, otherwise output can be unreliable
 
+.PARAMETER LastLogonDate
+Switch parameter that will look at the most recent file change in the root folder and report this back
+
 .NOTES   
 Name: Get-OrphanHomeFolder.ps1
 Author: Jaap Brasser
-Version: 1.9
+Version: 2.0
 DateCreated: 2012-10-19
-DateUpdated: 2015-09-23
+DateUpdated: 2020-05-10
 Blog: http://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
-    
+
 .EXAMPLE   
 .\Get-OrphanHomeFolder.ps1 -HomeFolderPath \\Server01\Home -FolderSize
 
@@ -111,7 +114,8 @@ param(
     [switch]$DisplayAll,
     [switch]$UseRobocopy,
     [switch]$RegExExclude,
-    [switch]$CheckHomeDirectory
+    [switch]$CheckHomeDirectory,
+    [switch]$LastLogonDate
 )
 # Check if HomeFolderPath is found, exit with warning message if path is incorrect
 if (!(Test-Path -LiteralPath $HomeFolderPath)){
@@ -164,13 +168,18 @@ $ListOfFolders | ForEach-Object {
     # If no matching samaccountname is found this code is executed and displayed
     if (!($ADResult)) {
         $HashProps = @{
-            'Error' = 'Account does not exist and has a home folder'
+            'Message' = 'Account does not exist and has a home folder'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
             $HashProps.SizeinBytes = [long](Get-ChildItem -LiteralPath $_.Fullname -Recurse -Force -ErrorAction SilentlyContinue |
                 Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue | Select-Object -Exp Sum)
             $HashProps.SizeinMegaBytes = "{0:n2}" -f ($HashProps.SizeinBytes/1MB)
+        }
+
+        if ($LastLogonDate) {
+            $HashProps.LastLogonDate = Get-ChildItem -LiteralPath $_.Fullname -Force -ErrorAction SilentlyContinue |
+                Where-Object {-not $_.PSISContainer} | Sort-Object -Property LastWriteTime | Select-Object -Last 1 -ExpandProperty LastWriteTime
         }
         
         if ($MoveFolderPath) {
@@ -188,13 +197,18 @@ $ListOfFolders | ForEach-Object {
     # If samaccountname is found but the account is disabled this information is displayed
     } elseif (([boolean]((-join $ADResult.Properties.useraccountcontrol) -band 2))) {
         $HashProps = @{
-            'Error' = 'Account is disabled and has a home folder'
+            'Message' = 'Account is disabled and has a home folder'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
             $HashProps.SizeinBytes = [long](Get-ChildItem -LiteralPath $_.Fullname -Recurse -Force -ErrorAction SilentlyContinue |
                 Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue | Select-Object -Exp Sum)
             $HashProps.SizeinMegaBytes = "{0:n2}" -f ($HashProps.SizeinBytes/1MB)
+        }
+
+        if ($LastLogonDate) {
+            $HashProps.LastLogonDate = Get-ChildItem -LiteralPath $_.Fullname -Force -ErrorAction SilentlyContinue |
+                Where-Object {-not $_.PSISContainer} | Sort-Object -Property LastWriteTime | Select-Object -Last 1 -ExpandProperty LastWriteTime
         }
 
         if ($MoveFolderPath -and $MoveDisabled) {
@@ -208,13 +222,18 @@ $ListOfFolders | ForEach-Object {
     # Folders that do have active user accounts are displayed if -DisplayAll switch is set
     } elseif ($ADResult -and $DisplayAll) {
         $HashProps = @{
-            'Error' = $null
+            'Message' = 'Account is active'
             'FullPath' = $_.FullName
         }
         if ($FolderSize) {
             $HashProps.SizeinBytes = [long](Get-ChildItem -LiteralPath $_.Fullname -Recurse -Force -ErrorAction SilentlyContinue |
                 Measure-Object -Property Length -Sum -ErrorAction SilentlyContinue | Select-Object -Exp Sum)
             $HashProps.SizeinMegaBytes = "{0:n2}" -f ($HashProps.SizeinBytes/1MB)
+        }
+
+        if ($LastLogonDate) {
+            $HashProps.LastLogonDate = Get-ChildItem -LiteralPath $_.Fullname -Force -ErrorAction SilentlyContinue |
+                Where-Object {-not $_.PSISContainer} | Sort-Object -Property LastWriteTime | Select-Object -Last 1 -ExpandProperty LastWriteTime
         }
 
         # Output the object

@@ -1,4 +1,4 @@
-﻿Function ConvertFrom-CompressedBase64 {
+﻿function ConvertFrom-CompressedBase64 {
     [cmdletbinding()]
     param(
         [Parameter(
