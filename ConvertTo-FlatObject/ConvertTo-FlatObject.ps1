@@ -1,4 +1,8 @@
 function ConvertTo-FlatObject {
+<#
+.SYNOPSIS
+Convert any object to a flat pscustomobject, so it can be used in flat formats such as csv
+#>
     param(
         $sla
     )
