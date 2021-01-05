@@ -27,13 +27,20 @@ Will create a folder in C:\Temp named after the PR number, and clone the specifi
 #add validation here or in param block
 
     $Request = Invoke-WebRequest $Uri
-
-    $Values = @{
-        Folder = '{0}\{1}_PR{2}' -f $Path, (($Uri -replace '\/$').Split('/')[4]), (($Uri -replace '\/$').Split('/')[-1])
-        GitHubUri = 'https://github.com/{0}' -f $Request.Links.Where{$_.class -match 'no-underline'}[-1].title.split(':')[0]
-        Branch = $Request.Links.Where{$_.class -match 'no-underline'}[-1].title.split(':')[1]
+    $Values = [ordered]@{
+        CurrentRepo = (($Uri -replace '\/$').Split('/')[4])
+        CurrentPR = (($Uri -replace '\/$').Split('/')[-1])
     }
 
+    $Values.Folder = '{0}\{1}_PR{2}' -f $Path, $Values.CurrentRepo, $Values.CurrentPR
+    $Values.GitHubUri, $Values.Branch = $Request.Links.Where{
+            $_.class -match 'no-underline'
+        }[-1..-10].Where{
+            $_.title -match $Values.CurrentRepo
+        }[0].title.split(':')
+    $Values.GitHubUri = 'https://github.com/{0}' -f $Values.GitHubUri
+
+    Write-Verbose ($Values | Out-String)
     Write-Information -Message "mkdir -Path $($Values.Folder)"
     
     try {
