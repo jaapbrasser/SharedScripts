@@ -13,11 +13,13 @@ function ConvertTo-BinaryString {
 
     Take a string, converts it to a binary string and returns it as an array
 #>
+    [cmdletbinding()]
     param(
+        [parameter(ValueFromPipeline)]
         [string] $String,
         [switch] $ReturnArray
     )
-    $Output = [int32[]]$String.tochararray() | ForEach-Object {[convert]::ToString($_,2).PadRight(8,0)}
+    $Output = [int32[]]$String.tochararray() | ForEach-Object {([convert]::ToString($_,2)).PadLeft(8,'0')}
 
     if ($ReturnArray) {
         return $Output
