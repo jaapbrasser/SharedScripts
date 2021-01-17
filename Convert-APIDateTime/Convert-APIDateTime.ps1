@@ -1,12 +1,15 @@
 function Convert-APIDateTime {
 <#
-.SYNOPSIS
-Function to convert specific date time format from API endpoint to a datetime object
+    .SYNOPSIS
+    Function to convert specific date time format from API endpoint to a datetime object
 
-.EXAMPLE
-Convert-APIDateTime "Thu Aug 08 20:31:36 UTC 2019" 
+    .DESCRIPTION
+    This function takes a specific date time string and converts it to a datetime object
 
-Thursday, August 8, 2019 8:31:36 PM
+    .EXAMPLE
+    Convert-APIDateTime "Thu Aug 08 20:31:36 UTC 2019" 
+
+    Thursday, August 8, 2019 8:31:36 PM
 #>
     [cmdletbinding()]
     param(
