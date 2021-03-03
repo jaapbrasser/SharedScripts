@@ -44,7 +44,7 @@ Author: Jaap Brasser
 Version: 2.0
 DateCreated: 2012-10-19
 DateUpdated: 2020-05-10
-Blog: http://www.jaapbrasser.com
+Blog: https://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
