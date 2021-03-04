@@ -12,7 +12,7 @@ Author:      Jaap Brasser
 DateCreated: 2017-01-26
 DateUpdated: 2017-01-26
 Version:     1.0.0
-Blog:        http://www.jaapbrasser.com
+Blog:        https://www.jaapbrasser.com
 
 .LINK
 http://www.jaapbrasser.com
