@@ -12,10 +12,10 @@ Author     : Jaap Brasser
 DateCreated: 2017-01-12
 DateUpdated: 2017-01-12
 Version    : 1.0
-Blog       : http://www.jaapbrasser.com
+Blog       : https://www.jaapbrasser.com
 
 .LINK
-http://www.jaapbrasser.com
+https://www.jaapbrasser.com
 
 .EXAMPLE
 . .\Clear-RecycleBin.ps1
