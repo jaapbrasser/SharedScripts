@@ -50,7 +50,7 @@ DateCreated: 2016-07-28
 DateUpdated: 2016-07-28
 
 .LINK
-http://www.jaapbrasser.com
+https://www.jaapbrasser.com
 
 .EXAMPLE
 . .\Add-ADAccounttoRDPUser.ps1
