@@ -20,7 +20,7 @@ Version:     1.0
 DateUpdated: -
 
 .LINK
-http://www.jaapbrasser.com
+https://www.jaapbrasser.com
 
 .EXAMPLE   
 Get-OUWithGPOLink
