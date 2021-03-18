@@ -4,7 +4,7 @@ This is a collection of scripts that are shared online.
 ## TechNet Gallery
 
 Scripts are also available for download in the Microsoft TechNet Script Gallery (Just and archive, as it is no longer maintained):
-[Jaap Brasser - TechNet Script Gallery](https://gallery.technet.microsoft.com/site/search?f%5B0%5D.Type=User&f%5B0%5D.Value=Jaap%20Brasser)
+[Jaap Brasser - TechNet Script Gallery (Decommissioned)](https://gallery.technet.microsoft.com/site/search?f%5B0%5D.Type=User&f%5B0%5D.Value=Jaap%20Brasser)
 
 ## Blog
 
