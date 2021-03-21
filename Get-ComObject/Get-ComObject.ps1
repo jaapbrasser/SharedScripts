@@ -13,7 +13,7 @@ Version: 1.0
 DateUpdated: 2013-06-24
 
 .LINK
-http://www.jaapbrasser.com
+https://www.jaapbrasser.com
 
 .PARAMETER Filter
 The string that will be used as a filter. Wildcard characters are allowed.
