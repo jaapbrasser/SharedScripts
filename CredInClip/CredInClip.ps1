@@ -20,10 +20,10 @@ Name: Set-CredInClip
 Author: Jaap Brasser
 DateUpdated: 2015-06-25
 Version: 1.0
-Blog: http://www.jaapbrasser.com
+Blog: https://www.jaapbrasser.com
 
 .LINK
-http://www.jaapbrasser.com
+https://www.jaapbrasser.com
 
 .EXAMPLE
 . .\CredInClip.ps1
